@@ -165,8 +165,10 @@ class Handler:
             # Account's rate
             if update.message.text == self.lang['like']:
                 mutually = db.addLiked(uid, bot, update)
-                if mutually != None:
-                    bot.sendMessage(uid, self.lang['mutually'] % (mutually['contact']), reply_markup=None)
+                if mutually is not None:
+                    bot.sendMessage(uid, self.lang['mutually'] % (mutually['name'], mutually['contact']), reply_markup=None)
+                    bot.sendMessage(mutually['id'], self.lang['mutually'] % (user['name'], user['contact']),
+                                    reply_markup=None)
                 else:
                     self.printNext(db, bot, update)
             elif update.message.text == self.lang['dislike']:
