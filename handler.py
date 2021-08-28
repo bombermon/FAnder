@@ -168,6 +168,7 @@ class Handler:
             # Account's rate
             if update.message.text == self.lang['like']:
                 mutually = db.addLiked(uid, bot, update)
+                db.updateUserData(uid, 'liked', user['liked'])
                 if mutually is not None:
                     bot.sendMessage(uid, self.lang['mutually'] % (mutually['name'], mutually['contact']),
                                     reply_markup=None)
@@ -178,6 +179,7 @@ class Handler:
                     self.printNext(db, bot, update)
             elif update.message.text == self.lang['dislike']:
                 db.addDisliked(uid, bot, update)
+                db.updateUserData(uid, 'disliked', user['disliked'])
                 self.printNext(db, bot, update)
             # Main menu
             elif update.message.text == '1' or update.message.text == self.lang['menu_continue']:
