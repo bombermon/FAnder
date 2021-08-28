@@ -2,28 +2,30 @@ from telegram import ReplyKeyboardMarkup, KeyboardButton, Bot, Update
 from validator import Validator
 import logging
 
+
 class Handler:
     def __init__(self, lang):
         self.lang = lang
         self.valr = Validator()
         self.logger = logging.getLogger(__name__)
         self.markup = {
-            'sexChoice': ReplyKeyboardMarkup([[KeyboardButton(self.lang['man'])], 
-                [KeyboardButton(self.lang['woman'])]],
-                resize_keyboard=True, one_time_keyboard=True),
-            'markChoice': ReplyKeyboardMarkup([[KeyboardButton(self.lang['like'])], [KeyboardButton(self.lang['dislike'])]],
+            'sexChoice': ReplyKeyboardMarkup([[KeyboardButton(self.lang['man'])],
+                                              [KeyboardButton(self.lang['woman'])]],
+                                             resize_keyboard=True, one_time_keyboard=True),
+            'markChoice': ReplyKeyboardMarkup(
+                [[KeyboardButton(self.lang['like'])], [KeyboardButton(self.lang['dislike'])]],
                 resize_keyboard=True, one_time_keyboard=True),
             'mainMenu': ReplyKeyboardMarkup([[KeyboardButton(self.lang['menu_continue'])],
-                [KeyboardButton(self.lang['menu_stop'])],
-                [KeyboardButton(self.lang['menu_delete'])],
-                [KeyboardButton(self.lang['menu_edit'])],
-                [KeyboardButton(self.lang['menu_show'])]]),
+                                             [KeyboardButton(self.lang['menu_stop'])],
+                                             [KeyboardButton(self.lang['menu_delete'])],
+                                             [KeyboardButton(self.lang['menu_edit'])],
+                                             [KeyboardButton(self.lang['menu_show'])]]),
             'confirmReg': ReplyKeyboardMarkup(
-                    [[KeyboardButton(self.lang['confirm_reg'])],
-                    [KeyboardButton(self.lang['repeat_reg'])]],
-                    resize_keyboard=True, one_time_keyboard=True)
+                [[KeyboardButton(self.lang['confirm_reg'])],
+                 [KeyboardButton(self.lang['repeat_reg'])]],
+                resize_keyboard=True, one_time_keyboard=True)
         }
-    
+
     def getLang(self):
         return self.lang
 
@@ -36,18 +38,19 @@ class Handler:
             if self.valr.checkPartner(user, db.getUsers()[i]):
                 partner = db.getUsers()[i]
                 db.updateUserData(uid, 'last_profile', partner['id'])
-                bot.sendPhoto(cid, partner['photo'], reply_markup=self.markup['markChoice'], 
-                    caption=self.lang['account_info'] % (partner['name'], partner['age'], partner['city'], partner['desc']),)
+                bot.sendPhoto(cid, partner['photo'], reply_markup=self.markup['markChoice'],
+                              caption=self.lang['account_info'] % (
+                              partner['name'], partner['age'], partner['city'], partner['desc']), )
                 return
         bot.sendMessage(cid, self.lang['no_partners'], reply_markup=self.markup['mainMenu'])
-    
+
     def printMe(self, db, bot, update):
         uid = update.message.from_user.id
         cid = update.message.chat_id
         user = db.getUserByID(uid)
-        bot.sendPhoto(cid, user['photo'], 
-                caption=self.lang['account_info'] % (user['name'], user['age'], user['city'], user['desc']), reply_markup=self.markup['mainMenu'])
-        
+        bot.sendPhoto(cid, user['photo'],
+                      caption=self.lang['account_info'] % (user['name'], user['age'], user['city'], user['desc']),
+                      reply_markup=self.markup['mainMenu'])
 
     def handle(self, db, bot, update):
         uid = update.message.from_user.id
@@ -68,7 +71,7 @@ class Handler:
         elif status == 'write_age':
             if self.valr.validAge(update.message.text):
                 db.updateUserData(uid, 'age', int(update.message.text))
-                db.updateUserData(uid, 'dialog_status', 'write_city')  
+                db.updateUserData(uid, 'dialog_status', 'write_city')
                 bot.sendMessage(cid, self.lang['write_city'])
             else:
                 bot.sendMessage(cid, self.lang['invalid_age'])
@@ -76,7 +79,7 @@ class Handler:
         # Enter city
         elif status == 'write_city':
             db.updateUserData(uid, 'city', str(update.message.text))
-            db.updateUserData(uid, 'dialog_status', 'write_sex')  
+            db.updateUserData(uid, 'dialog_status', 'write_sex')
             bot.sendMessage(cid, self.lang['write_sex'], reply_markup=self.markup['sexChoice'])
 
         # Choose gender
@@ -88,7 +91,7 @@ class Handler:
             else:
                 bot.sendMessage(cid, self.lang['incorrect_answer'])
                 return
-            db.updateUserData(uid, 'dialog_status', 'write_desc')  
+            db.updateUserData(uid, 'dialog_status', 'write_desc')
             bot.sendMessage(cid, self.lang['write_desc'])
 
         # Write description
@@ -112,14 +115,14 @@ class Handler:
             else:
                 bot.sendMessage(cid, self.lang['incorrect_answer'])
                 return
-            db.updateUserData(uid, 'dialog_status', 'write_p_min_age')  
+            db.updateUserData(uid, 'dialog_status', 'write_p_min_age')
             bot.sendMessage(cid, self.lang['write_p_min_age'])
 
         # Enter min partner's age
         elif status == 'write_p_min_age':
             if self.valr.validAge(update.message.text):
                 db.updateUserData(uid, 'p_min_age', int(update.message.text))
-                db.updateUserData(uid, 'dialog_status', 'write_p_max_age')  
+                db.updateUserData(uid, 'dialog_status', 'write_p_max_age')
                 bot.sendMessage(cid, self.lang['write_p_max_age'])
             else:
                 bot.sendMessage(cid, self.lang['invalid_age'])
@@ -128,7 +131,7 @@ class Handler:
         elif status == 'write_p_max_age':
             if self.valr.validAge(update.message.text):
                 db.updateUserData(uid, 'p_max_age', int(update.message.text))
-                db.updateUserData(uid, 'dialog_status', 'send_photo')  
+                db.updateUserData(uid, 'dialog_status', 'send_photo')
                 bot.sendMessage(cid, self.lang['send_photo'])
             else:
                 bot.sendMessage(cid, self.lang['invalid_age'])
@@ -145,7 +148,7 @@ class Handler:
                 bot.sendMessage(cid, self.lang['registered'], reply_markup=self.markup['confirmReg'])
             else:
                 bot.sendMessage(cid, self.lang['invalid_photo'])
-            
+
 
         # Start giving accounts
         elif status == 'registered':
@@ -166,9 +169,11 @@ class Handler:
             if update.message.text == self.lang['like']:
                 mutually = db.addLiked(uid, bot, update)
                 if mutually is not None:
-                    bot.sendMessage(uid, self.lang['mutually'] % (mutually['name'], mutually['contact']), reply_markup=None)
-                    bot.sendMessage(mutually['id'], self.lang['mutually'] % (user['name'], user['contact']),
+                    bot.sendMessage(uid, self.lang['mutually'] % (mutually['name'], mutually['contact']),
                                     reply_markup=None)
+                    bot.sendPhoto(mutually['id'], user['photo'],
+                                  caption=self.lang['mutually'] % (user['name'], user['contact']),
+                                  reply_markup=None)
                 else:
                     self.printNext(db, bot, update)
             elif update.message.text == self.lang['dislike']:
