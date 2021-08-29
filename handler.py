@@ -92,7 +92,7 @@ class Handler:
                 bot.sendMessage(cid, self.lang['incorrect_answer'])
                 return
             db.updateUserData(uid, 'dialog_status', 'write_desc')
-            bot.sendMessage(cid, self.lang['write_desc'])
+            bot.sendMessage(cid, self.lang['write_desc'], reply_markup=None)
 
         # Write description
         elif status == 'write_desc':
@@ -116,7 +116,7 @@ class Handler:
                 bot.sendMessage(cid, self.lang['incorrect_answer'])
                 return
             db.updateUserData(uid, 'dialog_status', 'write_p_min_age')
-            bot.sendMessage(cid, self.lang['write_p_min_age'])
+            bot.sendMessage(cid, self.lang['write_p_min_age'], reply_markup=None)
 
         # Enter min partner's age
         elif status == 'write_p_min_age':
@@ -129,7 +129,8 @@ class Handler:
 
         # Enter max partner's age
         elif status == 'write_p_max_age':
-            if self.valr.validAge(update.message.text):
+            user = db.getUserByID(uid)
+            if self.valr.validAge(update.message.text) and int(update.message.text) >= user['p_min_age']:
                 db.updateUserData(uid, 'p_max_age', int(update.message.text))
                 db.updateUserData(uid, 'dialog_status', 'send_photo')
                 bot.sendMessage(cid, self.lang['send_photo'])
@@ -190,9 +191,10 @@ class Handler:
             elif update.message.text == '3' or update.message.text == self.lang['menu_delete']:
                 db.removeUser(uid)
                 bot.sendMessage(cid, self.lang['profile_removed'])
+                # ЗДЕСЬ ДОБАВИТЬ ПРЕДЛОЖЕНИЕ ВЕРНУТЬСЯ!!!!!!
             elif update.message.text == '4' or update.message.text == self.lang['menu_edit']:
                 db.updateUserData(uid, 'dialog_status', 'write_name')
-                bot.sendMessage(cid, self.lang['rewrite'])
+                bot.sendMessage(cid, self.lang['rewrite'], reply_markup=None)
             elif update.message.text == '5' or update.message.text == self.lang['menu_show']:
                 self.printMe(db, bot, update)
             else:
