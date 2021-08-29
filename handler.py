@@ -13,8 +13,8 @@ class Handler:
                                               [KeyboardButton(self.lang['woman'])]],
                                              resize_keyboard=True, one_time_keyboard=True),
             'markChoice': ReplyKeyboardMarkup(
-                [[KeyboardButton(self.lang['like'])], [KeyboardButton(self.lang['dislike'])]],
-                resize_keyboard=True, one_time_keyboard=True),
+                [[KeyboardButton(self.lang['like']), KeyboardButton(self.lang['dislike'])], [KeyboardButton(self.lang['menu_stop'])]],
+                row_width=2, resize_keyboard=True, one_time_keyboard=True),
             'mainMenu': ReplyKeyboardMarkup([[KeyboardButton(self.lang['menu_continue'])],
                                              [KeyboardButton(self.lang['menu_stop'])],
                                              [KeyboardButton(self.lang['menu_delete'])],
@@ -187,7 +187,7 @@ class Handler:
                 self.printNext(db, bot, update)
             elif update.message.text == '2' or update.message.text == self.lang['menu_stop']:
                 db.updateUserData(uid, 'dialog_status', 'freezed')
-                bot.sendMessage(cid, self.lang['profile_freezed'])
+                bot.sendMessage(cid, self.lang['profile_freezed'], reply_markup=self.markup['mainMenu'])
             elif update.message.text == '3' or update.message.text == self.lang['menu_delete']:
                 db.removeUser(uid)
                 bot.sendMessage(cid, self.lang['profile_removed'])
@@ -202,9 +202,20 @@ class Handler:
 
         # Account is freezed
         elif status == 'freezed':
-            if update.message.text == '1':
+            if update.message.text == '1' or update.message.text == self.lang['menu_continue']:
                 db.updateUserData(uid, 'dialog_status', 'process')
                 self.printNext(db, bot, update)
+            elif update.message.text == '3' or update.message.text == self.lang['menu_delete']:
+                db.removeUser(uid)
+                bot.sendMessage(cid, self.lang['profile_removed'])
+                # ЗДЕСЬ ДОБАВИТЬ ПРЕДЛОЖЕНИЕ ВЕРНУТЬСЯ!!!!!!
+            elif update.message.text == '4' or update.message.text == self.lang['menu_edit']:
+                db.updateUserData(uid, 'dialog_status', 'write_name')
+                bot.sendMessage(cid, self.lang['rewrite'], reply_markup=None)
+            elif update.message.text == '5' or update.message.text == self.lang['menu_show']:
+                self.printMe(db, bot, update)
+            else:
+                bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu'])
         # Other situations
         else:
             bot.sendMessage(cid, self.lang['not_understand'])
