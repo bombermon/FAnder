@@ -17,13 +17,17 @@ class Handler:
                                               [KeyboardButton(self.lang['friends'])]],
                                              resize_keyboard=True, one_time_keyboard=True),
             'markChoice': ReplyKeyboardMarkup(
-                [[KeyboardButton(self.lang['like']), KeyboardButton(self.lang['dislike'])], [KeyboardButton(self.lang['menu_stop'])]],
+                [[KeyboardButton(self.lang['like']), KeyboardButton(self.lang['dislike'])], [KeyboardButton(self.lang['go_menu'])]],
                 row_width=2, resize_keyboard=True, one_time_keyboard=True),
             'mainMenu': ReplyKeyboardMarkup([[KeyboardButton(self.lang['menu_continue'])],
                                              [KeyboardButton(self.lang['menu_stop'])],
                                              [KeyboardButton(self.lang['menu_delete'])],
                                              [KeyboardButton(self.lang['menu_edit'])],
-                                             [KeyboardButton(self.lang['menu_show'])]]),
+                                             [KeyboardButton(self.lang['menu_show'])]], resize_keyboard=True, one_time_keyboard=True),
+            'frozenMenu': ReplyKeyboardMarkup([[KeyboardButton(self.lang['menu_continue'])],
+                                             [KeyboardButton(self.lang['menu_delete'])],
+                                             [KeyboardButton(self.lang['menu_edit'])],
+                                             [KeyboardButton(self.lang['menu_show'])]], resize_keyboard=True, one_time_keyboard=True),
             'confirmReg': ReplyKeyboardMarkup(
                 [[KeyboardButton(self.lang['confirm_reg'])],
                  [KeyboardButton(self.lang['repeat_reg'])]],
@@ -188,21 +192,43 @@ class Handler:
                 db.addDisliked(uid, bot, update)
                 db.updateUserData(uid, 'disliked', user['disliked'])
                 self.printNext(db, bot, update)
-            # Main menu
-            elif update.message.text == '1' or update.message.text == self.lang['menu_continue']:
-                self.printNext(db, bot, update)
-            elif update.message.text == '2' or update.message.text == self.lang['menu_stop']:
-                db.updateUserData(uid, 'dialog_status', 'freezed')
-                bot.sendMessage(cid, self.lang['profile_freezed'], reply_markup=self.markup['mainMenu'])
-            elif update.message.text == '3' or update.message.text == self.lang['menu_delete']:
+            elif update.message.text == self.lang['go_menu']:
+                db.updateUserData(uid, 'dialog_status', 'in_menu')
+                bot.sendMessage(cid, self.lang['in_menu'], reply_markup=self.markup['mainMenu'])
 
+
+            elif update.message.text == self.lang['menu_continue']:
+                db.updateUserData(uid, 'dialog_status', 'process')
+                self.printNext(db, bot, update)
+            elif update.message.text == self.lang['menu_stop']:
+                db.updateUserData(uid, 'dialog_status', 'freezed')
+                bot.sendMessage(cid, self.lang['profile_freezed'], reply_markup=self.markup['frozenMenu'])
+            elif update.message.text == self.lang['menu_delete']:
                 bot.sendMessage(cid, self.lang['profile_removed'], reply_markup='')
                 db.removeUser(uid)
-                # ЗДЕСЬ ДОБАВИТЬ ПРЕДЛОЖЕНИЕ ВЕРНУТЬСЯ!!!!!!
-            elif update.message.text == '4' or update.message.text == self.lang['menu_edit']:
+            elif update.message.text == self.lang['menu_edit']:
                 db.updateUserData(uid, 'dialog_status', 'write_name')
                 bot.sendMessage(cid, self.lang['rewrite'], remove_keyboard=True)
-            elif update.message.text == '5' or update.message.text == self.lang['menu_show']:
+            elif update.message.text == self.lang['menu_show']:
+                self.printMe(db, bot, update)
+            else:
+                bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu'])
+                # Main menu
+        elif status == 'in_menu':
+            if update.message.text == self.lang['menu_continue']:
+                db.updateUserData(uid, 'dialog_status', 'process')
+                self.printNext(db, bot, update)
+            elif update.message.text == self.lang['menu_stop']:
+                db.updateUserData(uid, 'dialog_status', 'freezed')
+                bot.sendMessage(cid, self.lang['profile_freezed'], reply_markup=self.markup['frozenMenu'])
+            elif update.message.text == self.lang['menu_delete']:
+                bot.sendMessage(cid, self.lang['profile_removed'], reply_markup='')
+                db.removeUser(uid)
+
+            elif update.message.text == self.lang['menu_edit']:
+                db.updateUserData(uid, 'dialog_status', 'write_name')
+                bot.sendMessage(cid, self.lang['rewrite'], remove_keyboard=True)
+            elif update.message.text == self.lang['menu_show']:
                 self.printMe(db, bot, update)
             else:
                 bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu'])

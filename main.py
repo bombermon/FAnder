@@ -5,6 +5,8 @@ from database import Database
 from handler import Handler
 from broadcaster import Broadcaster
 from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackQueryHandler, Filters
+from telegram import ReplyKeyboardMarkup, KeyboardButton
+
 
 def init_bot(config, lang, token):
     global db
@@ -45,7 +47,9 @@ def start(bot, update):
     # If found, continue
     if(user != None):
         if user['dialog_status'] == 'process':
-            bot.sendMessage(cid, handler.getLang()['already_in'])
+            bot.sendMessage(cid, handler.getLang()['already_in'], reply_markup=ReplyKeyboardMarkup(
+                [[KeyboardButton(handler.getLang()['menu_continue'])]],
+                resize_keyboard=True, one_time_keyboard=True))
     # Else register him
     else:
         db.addUser({'id': int(uid), 'chat_id': int(cid), 'dialog_status': 'start', 'liked': [], 'disliked': []})
