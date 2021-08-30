@@ -31,6 +31,9 @@ class Handler:
             'confirmReg': ReplyKeyboardMarkup(
                 [[KeyboardButton(self.lang['confirm_reg'])],
                  [KeyboardButton(self.lang['repeat_reg'])]],
+                resize_keyboard=True, one_time_keyboard=True),
+            'continue': ReplyKeyboardMarkup(
+                [[KeyboardButton(self.lang['menu_continue'])]],
                 resize_keyboard=True, one_time_keyboard=True)
         }
 
@@ -182,10 +185,10 @@ class Handler:
                 db.updateUserData(uid, 'liked', user['liked'])
                 if mutually is not None:
                     bot.sendMessage(uid, self.lang['mutually'] % (mutually['name'], mutually['contact']),
-                                    remove_keyboard=True)
+                                    reply_markup=self.markup['continue'])
                     bot.sendPhoto(mutually['id'], user['photo'],
                                   caption=self.lang['mutually'] % (user['name'], user['contact']),
-                                  remove_keyboard=True)
+                                  reply_markup=self.markup['continue'])
                 else:
                     self.printNext(db, bot, update)
             elif update.message.text == self.lang['dislike']:
