@@ -59,6 +59,7 @@ class Database:
             if self.users[i]['id'] == id:
                 os.remove('profiles/'+str(self.users[i]['id'])+'.json')
                 self.users.remove(self.users[i])
+                return
 
     def getUserByID(self, id):
         for i in range(len(self.users)):
