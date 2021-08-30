@@ -9,8 +9,12 @@ class Handler:
         self.valr = Validator()
         self.logger = logging.getLogger(__name__)
         self.markup = {
-            'sexChoice': ReplyKeyboardMarkup([[KeyboardButton(self.lang['man'])],
-                                              [KeyboardButton(self.lang['woman'])]],
+            'sexChoice_user': ReplyKeyboardMarkup([[KeyboardButton(self.lang['man']),
+                                              KeyboardButton(self.lang['woman'])]],
+                                             resize_keyboard=True, one_time_keyboard=True),
+            'sexChoice': ReplyKeyboardMarkup([[KeyboardButton(self.lang['man']),
+                                               KeyboardButton(self.lang['woman'])],
+                                              [KeyboardButton(self.lang['friends'])]],
                                              resize_keyboard=True, one_time_keyboard=True),
             'markChoice': ReplyKeyboardMarkup(
                 [[KeyboardButton(self.lang['like']), KeyboardButton(self.lang['dislike'])], [KeyboardButton(self.lang['menu_stop'])]],
@@ -80,7 +84,7 @@ class Handler:
         elif status == 'write_city':
             db.updateUserData(uid, 'city', str(update.message.text))
             db.updateUserData(uid, 'dialog_status', 'write_sex')
-            bot.sendMessage(cid, self.lang['write_sex'], reply_markup=self.markup['sexChoice'])
+            bot.sendMessage(cid, self.lang['write_sex'], reply_markup=self.markup['sexChoice_user'])
 
         # Choose gender
         elif status == 'write_sex':
@@ -92,7 +96,7 @@ class Handler:
                 bot.sendMessage(cid, self.lang['incorrect_answer'])
                 return
             db.updateUserData(uid, 'dialog_status', 'write_desc')
-            bot.sendMessage(cid, self.lang['write_desc'], remove_keyboard=True)
+            bot.sendMessage(cid, self.lang['write_desc'], reply_markup=None)
 
         # Write description
         elif status == 'write_desc':
@@ -112,6 +116,8 @@ class Handler:
                 db.updateUserData(uid, 'p_sex', 0)
             elif update.message.text == self.lang['woman']:
                 db.updateUserData(uid, 'p_sex', 1)
+            elif update.message.text == self.lang['friends']:
+                db.updateUserData(uid, 'p_sex', 2)
             else:
                 bot.sendMessage(cid, self.lang['incorrect_answer'])
                 return
@@ -189,7 +195,8 @@ class Handler:
                 db.updateUserData(uid, 'dialog_status', 'freezed')
                 bot.sendMessage(cid, self.lang['profile_freezed'], reply_markup=self.markup['mainMenu'])
             elif update.message.text == '3' or update.message.text == self.lang['menu_delete']:
-                bot.sendMessage(cid, self.lang['profile_removed'], remove_keyboard=True, reply_markup=None)
+
+                bot.sendMessage(cid, self.lang['profile_removed'], reply_markup='')
                 db.removeUser(uid)
                 # ЗДЕСЬ ДОБАВИТЬ ПРЕДЛОЖЕНИЕ ВЕРНУТЬСЯ!!!!!!
             elif update.message.text == '4' or update.message.text == self.lang['menu_edit']:
@@ -206,7 +213,7 @@ class Handler:
                 db.updateUserData(uid, 'dialog_status', 'process')
                 self.printNext(db, bot, update)
             elif update.message.text == '3' or update.message.text == self.lang['menu_delete']:
-                bot.sendMessage(cid, self.lang['profile_removed'], remove_keyboard=True, reply_markup=None)
+                bot.sendMessage(cid, self.lang['profile_removed'], reply_markup='')
                 db.removeUser(uid)
 
             elif update.message.text == '4' or update.message.text == self.lang['menu_edit']:
