@@ -172,9 +172,9 @@ class Handler:
                 self.printNext(db, bot, update)
             elif update.message.text == self.lang['repeat_reg']:
                 db.updateUserData(uid, 'dialog_status', 'write_name')
-                bot.sendMessage(cid, self.lang['rewrite'], reply_markup=self.markup['mainMenu'])
+                bot.sendMessage(cid, self.lang['rewrite'], remove_keyboard=True)
             else:
-                bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu'])
+                bot.sendMessage(cid, self.lang['incorrect_answer'], remove_keyboard=True)
 
         # Search cycle
         elif status == 'process':
@@ -238,17 +238,17 @@ class Handler:
 
         # Account is freezed
         elif status == 'freezed':
-            if update.message.text == '1' or update.message.text == self.lang['menu_continue']:
+            if update.message.text == self.lang['menu_continue']:
                 db.updateUserData(uid, 'dialog_status', 'process')
                 self.printNext(db, bot, update)
-            elif update.message.text == '3' or update.message.text == self.lang['menu_delete']:
+            elif update.message.text == self.lang['menu_delete']:
                 bot.sendMessage(cid, self.lang['profile_removed'], reply_markup='')
                 db.removeUser(uid)
 
-            elif update.message.text == '4' or update.message.text == self.lang['menu_edit']:
+            elif update.message.text == self.lang['menu_edit']:
                 db.updateUserData(uid, 'dialog_status', 'write_name')
                 bot.sendMessage(cid, self.lang['rewrite'], remove_keyboard=True)
-            elif update.message.text == '5' or update.message.text == self.lang['menu_show']:
+            elif update.message.text == self.lang['menu_show']:
                 self.printMe(db, bot, update)
             else:
                 bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu'])
