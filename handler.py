@@ -51,7 +51,7 @@ class Handler:
                 db.updateUserData(uid, 'last_profile', partner['id'])
                 bot.sendPhoto(cid, partner['photo'], reply_markup=self.markup['markChoice'],
                               caption=self.lang['account_info'] % (
-                              partner['name'], partner['age'], partner['city'], partner['desc']), )
+                              partner['name'], partner['age'], partner['desc']), )
                 return
         bot.sendMessage(cid, self.lang['no_partners'], reply_markup=self.markup['mainMenu'])
 
@@ -60,7 +60,7 @@ class Handler:
         cid = update.message.chat_id
         user = db.getUserByID(uid)
         bot.sendPhoto(cid, user['photo'],
-                      caption=self.lang['account_info'] % (user['name'], user['age'], user['city'], user['desc']),
+                      caption=self.lang['account_info'] % (user['name'], user['age'], user['desc']),
                       reply_markup=self.markup['mainMenu'])
 
     def handle(self, db, bot, update):
@@ -82,8 +82,8 @@ class Handler:
         elif status == 'write_age':
             if self.valr.validAge(update.message.text):
                 db.updateUserData(uid, 'age', int(update.message.text))
-                db.updateUserData(uid, 'dialog_status', 'write_city')
-                bot.sendMessage(cid, self.lang['write_city'])
+                db.updateUserData(uid, 'dialog_status', 'write_sex')
+                bot.sendMessage(cid, self.lang['write_sex'], reply_markup=self.markup['sexChoice_user'])
             else:
                 bot.sendMessage(cid, self.lang['invalid_age'])
 

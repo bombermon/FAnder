@@ -18,7 +18,7 @@ invalid_photo: "Размер фотографии не должен превыш
 not_understand: "Не понимаю тебя("
 incorrect_answer: "Некорректный ответ. Попробуйте еще раз"
 registered: "Готово. Все правильно?"
-account_info: "%s, %d, %s\n\n%s"
+account_info: "%s, %d\n\n%s"
 confirm_reg: "Да, все верно"
 repeat_reg: "Нет, хочу заполнить заново"
 rewrite: "Хорошо, давай заполним заново. Напиши свое имя"
