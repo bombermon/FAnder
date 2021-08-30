@@ -23,18 +23,18 @@ class Handler:
                                              [KeyboardButton(self.lang['menu_stop'])],
                                              [KeyboardButton(self.lang['menu_delete'])],
                                              [KeyboardButton(self.lang['menu_edit'])],
-                                             [KeyboardButton(self.lang['menu_show'])]], resize_keyboard=True, one_time_keyboard=False),
+                                             [KeyboardButton(self.lang['menu_show'])]], resize_keyboard=True, one_time_keyboard=True),
             'frozenMenu': ReplyKeyboardMarkup([[KeyboardButton(self.lang['menu_continue'])],
                                              [KeyboardButton(self.lang['menu_delete'])],
                                              [KeyboardButton(self.lang['menu_edit'])],
-                                             [KeyboardButton(self.lang['menu_show'])]], resize_keyboard=True, one_time_keyboard=False),
+                                             [KeyboardButton(self.lang['menu_show'])]], resize_keyboard=True, one_time_keyboard=True),
             'confirmReg': ReplyKeyboardMarkup(
                 [[KeyboardButton(self.lang['confirm_reg'])],
                  [KeyboardButton(self.lang['repeat_reg'])]],
                 resize_keyboard=True, one_time_keyboard=True),
             'continue': ReplyKeyboardMarkup(
                 [[KeyboardButton(self.lang['menu_continue'])]],
-                resize_keyboard=True, one_time_keyboard=True)
+                resize_keyboard=True, one_time_keyboard=False)
         }
 
     def getLang(self):
@@ -211,7 +211,7 @@ class Handler:
                 db.removeUser(uid)
             elif update.message.text == self.lang['menu_edit']:
                 db.updateUserData(uid, 'dialog_status', 'write_name')
-                bot.sendMessage(cid, self.lang['rewrite'], remove_keyboard=True)
+                bot.sendMessage(cid, self.lang['rewrite'], reply_markup='')
             elif update.message.text == self.lang['menu_show']:
                 self.printMe(db, bot, update)
             else:
@@ -230,7 +230,7 @@ class Handler:
 
             elif update.message.text == self.lang['menu_edit']:
                 db.updateUserData(uid, 'dialog_status', 'write_name')
-                bot.sendMessage(cid, self.lang['rewrite'], remove_keyboard=True)
+                bot.sendMessage(cid, self.lang['rewrite'], reply_markup='')
             elif update.message.text == self.lang['menu_show']:
                 self.printMe(db, bot, update)
             else:
@@ -247,7 +247,7 @@ class Handler:
 
             elif update.message.text == self.lang['menu_edit']:
                 db.updateUserData(uid, 'dialog_status', 'write_name')
-                bot.sendMessage(cid, self.lang['rewrite'], remove_keyboard=True)
+                bot.sendMessage(cid, self.lang['rewrite'], reply_markup='')
             elif update.message.text == self.lang['menu_show']:
                 self.printMe(db, bot, update)
             else:
