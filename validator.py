@@ -19,7 +19,7 @@ class Validator:
     def checkPartner(self, user, partner):
         pCity = partner['city'].lower().strip()
         uCity = user['city'].lower().strip()
-        if (partner['dialog_status'] == 'process') and (partner['id'] != user['id']) and (partner['age'] >= user['p_min_age']) and (partner['age'] <= user['p_max_age']) and (partner['sex'] == user['p_sex']) and (user['sex'] == partner['p_sex']) and ((partner['dialog_status'] == "process") or (partner['dialog_status'] == "freezed")):
+        if (partner['id'] != user['id']) and (partner['age'] >= user['p_min_age']) and (partner['age'] <= user['p_max_age']) and (partner['sex'] == user['p_sex']) and (user['sex'] == partner['p_sex']) and ((partner['dialog_status'] == "process") or (partner['dialog_status'] == "freezed")):
             if (partner['id'] not in user['liked']) and (partner['id'] not in user['disliked']):
                 return True
         return False
