@@ -53,8 +53,10 @@ def start(bot, update):
     # Else register him
     else:
         db.addUser({'id': int(uid), 'chat_id': int(cid), 'dialog_status': 'start', 'liked': [], 'disliked': []})
-        bot.sendMessage(update.message.chat_id, handler.getLang()['greeting_new'], remove_keyboard=True)
-        db.updateUserData(int(uid), 'dialog_status', 'write_name')
+        bot.sendMessage(update.message.chat_id, handler.getLang()['privacy_policy'], reply_markup=ReplyKeyboardMarkup(
+                [[KeyboardButton(handler.getLang()['acception'])]],
+                resize_keyboard=True, one_time_keyboard=True))
+        db.updateUserData(int(uid), 'dialog_status', 'privacy_policy_acception')
 
 
 def help(bot, update):

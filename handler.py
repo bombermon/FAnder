@@ -70,7 +70,13 @@ class Handler:
         status = user['dialog_status']
 
         # Enter username
-        if status == 'write_name':
+        if status == 'privacy_policy_acception':
+            if update.message.text == self.lang["acception"]:
+                db.updateUserData(uid, 'dialog_status', 'write_name')
+                bot.sendMessage(cid, self.lang['greeting_new'], reply_markup=None)
+            else:
+                bot.sendMessage(cid, self.lang['not_understand'])
+        elif status == 'write_name':
             if self.valr.validName(update.message.text):
                 db.updateUserData(uid, 'name', str(update.message.text).strip())
                 db.updateUserData(uid, 'dialog_status', 'write_age')
