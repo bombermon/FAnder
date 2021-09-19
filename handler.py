@@ -46,9 +46,7 @@ class Handler:
         uid = update.message.from_user.id
         cid = update.message.chat_id
         user = db.getUserByID(uid)
-        print(list(range(0, len(db.getUsers()))))
         for i in random.sample(range(0, len(db.getUsers())),len(db.getUsers())):
-            print(i)
             if self.valr.checkPartner(user, db.getUsers()[i]):
                 partner = db.getUsers()[i]
                 db.updateUserData(uid, 'last_profile', partner['id'])

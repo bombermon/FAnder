@@ -57,7 +57,9 @@ class Database:
     def removeUser(self, id):
         for i in range(len(self.users)):
             if self.users[i].get("disliked") is not None:
+                print("ya zdes")
                 if id in self.users[i]["disliked"]:
+                    print(id, ' deleted from ', i, ' "disliked"')
                     self.users[i]["disliked"].remove(id)
                     self.updateUserData(i, "disliked", self.users[i]["disliked"])
             else:
@@ -65,6 +67,7 @@ class Database:
 
             if self.users[i].get("liked") is not None:
                 if id in self.users[i]["liked"]:
+                    print(id, ' deleted from ', i, ' "liked"')
                     self.users[i]["liked"].remove(id)
                     self.updateUserData(i, "liked", self.users[i]["liked"])
             else:
