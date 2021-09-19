@@ -56,6 +56,21 @@ class Database:
     
     def removeUser(self, id):
         for i in range(len(self.users)):
+            if self.users[i].get("disliked") is not None:
+                if id in self.users[i]["disliked"]:
+                    self.users[i]["disliked"].remove(id)
+                    self.updateUserData(i, "disliked", self.users[i]["disliked"])
+            else:
+                print(self.users[i], '\nprofile does not have "disliked" field')
+
+            if self.users[i].get("liked") is not None:
+                if id in self.users[i]["liked"]:
+                    self.users[i]["liked"].remove(id)
+                    self.updateUserData(i, "liked", self.users[i]["liked"])
+            else:
+                print(self.users[i], '\nprofile does not have "liked" field')
+
+        for i in range(len(self.users)):
             if self.users[i]['id'] == id:
                 os.remove('profiles/'+str(self.users[i]['id'])+'.json')
                 self.users.remove(self.users[i])
@@ -63,7 +78,7 @@ class Database:
 
     def getUserByID(self, id):
         for i in range(len(self.users)):
-            if(self.users[i]['id'] == id):
+            if self.users[i]['id'] == id:
                 return self.users[i]
         return None
     
