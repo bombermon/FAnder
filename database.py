@@ -25,7 +25,7 @@ class Database:
     def addLiked(self, id, bot, update):
         liked_id = self.getUserByID(id)['last_profile']
         for i in range(len(self.users)):
-            if(self.users[i]['id'] == id):
+            if self.users[i]['id'] == id:
                 self.users[i]['liked'].append(liked_id)
                 # check reciprocity
                 partner = None
@@ -60,7 +60,7 @@ class Database:
                 if id in self.users[i]["disliked"]:
                     print(id, ' deleted from ', self.users[i]['id'], ' "disliked"')
                     self.users[i]["disliked"].remove(id)
-                    self.updateUserData(i, "disliked", self.users[i]["disliked"])
+                    self.updateUserData(self.users[i]['id'], "disliked", self.users[i]["disliked"])
             else:
                 print(self.users[i], '\nprofile does not have "disliked" field')
 
@@ -68,7 +68,8 @@ class Database:
                 if id in self.users[i]["liked"]:
                     print(id, ' deleted from ', self.users[i]['id'], ' "liked"')
                     self.users[i]["liked"].remove(id)
-                    self.updateUserData(i, "liked", self.users[i]["liked"])
+                    print(self.users[i]["liked"])
+                    self.updateUserData(self.users[i]['id'], "liked", self.users[i]["liked"])
             else:
                 print(self.users[i], '\nprofile does not have "liked" field')
 
@@ -86,6 +87,6 @@ class Database:
     
     def updateUserData(self, id, key, value):
         for i in range(len(self.users)):
-            if(self.users[i]['id'] == id):
+            if self.users[i]['id'] == id:
                 self.users[i][key] = value
         self.saveUser(id)
