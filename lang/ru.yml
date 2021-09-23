@@ -40,6 +40,15 @@ menu_edit: "✍ Редактировать анкету"
 menu_show: "👀 Показать мою анкету"
 go_menu: "В меню"
 in_menu: "Поиск приостановлен. Вы находитесь в меню.\nДля выхода напишите 'Продолжить поиск'"
+write_faculty: "Выберите ваш факультет"
+faculty_of_information_technology_and_big_data_analysis: "ИТиАБД"
+faculty_of_finance: "ФинФак"
+higher_school_of_management: "МЭО"
+faculty_of_international_economic_relations: "ВШУ"
+faculty_of_social_sciences_and_mass_communications: "ФСНиМК"
+faculty_of_economics_and_business: "ФЭБ"
+faculty_of_law: "Юрфак"
+faculty_of_taxes_audit_and_business_analysis: "НАБ"
 
 
 

@@ -20,6 +20,12 @@ class Handler:
             'markChoice': ReplyKeyboardMarkup(
                 [[KeyboardButton(self.lang['like']), KeyboardButton(self.lang['dislike'])], [KeyboardButton(self.lang['go_menu'])]],
                 row_width=2, resize_keyboard=True, one_time_keyboard=False),
+            'facultyChoice': ReplyKeyboardMarkup(
+                [[KeyboardButton(self.lang['faculty_of_information_technology_and_big_data_analysis']), KeyboardButton(self.lang['faculty_of_finance'])],
+                 [KeyboardButton(self.lang['higher_school_of_management']), KeyboardButton(self.lang['faculty_of_international_economic_relations'])],
+                 [KeyboardButton(self.lang['faculty_of_social_sciences_and_mass_communications']), KeyboardButton(self.lang['faculty_of_economics_and_business'])],
+                 [KeyboardButton(self.lang['faculty_of_law']), KeyboardButton(self.lang['faculty_of_taxes_audit_and_business_analysis'])]],
+                row_width=2, resize_keyboard=True, one_time_keyboard=True),
             'mainMenu': ReplyKeyboardMarkup([[KeyboardButton(self.lang['menu_continue'])],
                                              [KeyboardButton(self.lang['menu_stop'])],
                                              [KeyboardButton(self.lang['menu_delete'])],
@@ -106,12 +112,35 @@ class Handler:
                 db.updateUserData(uid, 'sex', 0)
             elif update.message.text == self.lang['woman']:
                 db.updateUserData(uid, 'sex', 1)
+                bot.sendMessage(cid, self.lang['incorrect_answer'])
+                return
+            db.updateUserData(uid, 'dialog_status', 'write_faculty')
+            bot.sendMessage(cid, self.lang['write_faculty'], reply_markup=self.markup['facultyChoice'])
+
+        # Write faculty (Факультет)
+        elif status == 'write_faculty':
+            if update.message.text == self.lang['faculty_of_information_technology_and_big_data_analysis']:
+                db.updateUserData(uid, 'faculty', "faculty_of_information_technology_and_big_data_analysis")
+            elif update.message.text == self.lang['faculty_of_finance']:
+                db.updateUserData(uid, 'faculty', 'faculty_of_finance')
+            elif update.message.text == self.lang['higher_school_of_management']:
+                db.updateUserData(uid, 'faculty', 'higher_school_of_management')
+            elif update.message.text == self.lang['faculty_of_international_economic_relations']:
+                db.updateUserData(uid, 'faculty', 'faculty_of_international_economic_relations')
+            elif update.message.text == self.lang['faculty_of_social_sciences_and_mass_communications']:
+                db.updateUserData(uid, 'faculty', 'faculty_of_social_sciences_and_mass_communications')
+            elif update.message.text == self.lang['faculty_of_economics_and_business']:
+                db.updateUserData(uid, 'faculty', 'faculty_of_economics_and_business')
+            elif update.message.text == self.lang['faculty_of_law']:
+                db.updateUserData(uid, 'faculty', 'faculty_of_law')
+            elif update.message.text == self.lang['faculty_of_taxes_audit_and_business_analysis']:
+                db.updateUserData(uid, 'faculty', 'faculty_of_taxes_audit_and_business_analysis')
             else:
                 bot.sendMessage(cid, self.lang['incorrect_answer'])
                 return
             db.updateUserData(uid, 'dialog_status', 'write_desc')
-            bot.sendMessage(cid, self.lang['write_desc'], reply_markup=None)
-
+            bot.sendMessage(cid, self.lang['write_desc'], reply_markup=None, remove_keyboard=True)
+        
         # Write description
         elif status == 'write_desc':
             db.updateUserData(uid, 'desc', str(update.message.text))
