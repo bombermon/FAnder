@@ -58,7 +58,7 @@ class Handler:
                 db.updateUserData(uid, 'last_profile', partner['id'])
                 bot.sendPhoto(cid, partner['photo'], reply_markup=self.markup['markChoice'],
                               caption=self.lang['account_info'] % (
-                              partner['name'], partner['age'], partner['desc']), )
+                              partner['name'], partner['age'], self.lang[partner['faculty']], partner['desc']), )
                 return
         bot.sendMessage(cid, self.lang['no_partners'], reply_markup=self.markup['mainMenu'])
 
@@ -67,7 +67,7 @@ class Handler:
         cid = update.message.chat_id
         user = db.getUserByID(uid)
         bot.sendPhoto(cid, user['photo'],
-                      caption=self.lang['account_info'] % (user['name'], user['age'], user['desc']),
+                      caption=self.lang['account_info'] % (user['name'], user['age'], self.lang[user['faculty']], user['desc']),
                       reply_markup=self.markup['mainMenu'])
 
     def handle(self, db, bot, update):
