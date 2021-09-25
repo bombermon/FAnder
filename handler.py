@@ -112,6 +112,7 @@ class Handler:
                 db.updateUserData(uid, 'sex', 0)
             elif update.message.text == self.lang['woman']:
                 db.updateUserData(uid, 'sex', 1)
+            else:
                 bot.sendMessage(cid, self.lang['incorrect_answer'])
                 return
             db.updateUserData(uid, 'dialog_status', 'write_faculty')
