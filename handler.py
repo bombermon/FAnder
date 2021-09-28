@@ -4,6 +4,7 @@ import logging
 import random
 
 
+
 class Handler:
     def __init__(self, lang):
         self.lang = lang
@@ -309,3 +310,4 @@ class Handler:
         else:
             bot.sendMessage(cid, self.lang['not_understand'])
 
+    def debug(self):
