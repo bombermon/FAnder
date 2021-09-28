@@ -59,7 +59,11 @@ class Database:
             if self.users[i].get("disliked") is not None:
                 if id in self.users[i]["disliked"]:
                     print(id, ' deleted from ', self.users[i]['id'], ' "disliked"')
-                    self.users[i]["disliked"].remove(id)
+                    temp_dis = []
+                    for j in self.users[i]["disliked"]:
+                        if j != id:
+                            temp_dis.append(j)
+                    self.users[i]["disliked"] = temp_dis
                     self.updateUserData(self.users[i]['id'], "disliked", self.users[i]["disliked"])
             else:
                 print(self.users[i], '\nprofile does not have "disliked" field')
@@ -67,7 +71,11 @@ class Database:
             if self.users[i].get("liked") is not None:
                 if id in self.users[i]["liked"]:
                     print(id, ' deleted from ', self.users[i]['id'], ' "liked"')
-                    self.users[i]["liked"].remove(id)
+                    temp_like = []
+                    for j in self.users[i]["liked"]:
+                        if j != id:
+                            temp_like.append(j)
+                    self.users[i]["liked"] = temp_like
                     print(self.users[i]["liked"])
                     self.updateUserData(self.users[i]['id'], "liked", self.users[i]["liked"])
             else:
