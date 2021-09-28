@@ -289,5 +289,9 @@ class Handler:
             else:
                 bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu'])
         # Other situations
+
+        elif status == 'ban':
+            bot.sendMessage(cid, 'Вы заблокированы за нарушения правил сервиса.')
         else:
             bot.sendMessage(cid, self.lang['not_understand'])
+
