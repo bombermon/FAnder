@@ -62,13 +62,23 @@ class Handler:
                 return
         bot.sendMessage(cid, self.lang['no_partners'], reply_markup=self.markup['mainMenu'])
 
-    def printMe(self, db, bot, update):
+    def printMe(self, db, bot, update, status='True'):
         uid = update.message.from_user.id
         cid = update.message.chat_id
         user = db.getUserByID(uid)
-        bot.sendPhoto(cid, user['photo'],
-                      caption=self.lang['account_info'] % (user['name'], user['age'], self.lang[user['faculty']], user['desc']),
-                      reply_markup=self.markup['mainMenu'])
+        if status == 'True':
+            bot.sendPhoto(cid, user['photo'],
+                          caption=self.lang['account_info'] % (user['name'], user['age'], self.lang[user['faculty']], user['desc']),
+                          reply_markup=self.markup['mainMenu'])
+        elif status == 'False':
+            bot.sendPhoto(cid, user['photo'],
+                          caption=self.lang['account_info'] % (
+                          user['name'], user['age'], self.lang[user['faculty']], user['desc']))
+        elif status == 'frozen':
+            bot.sendPhoto(cid, user['photo'],
+                      caption=self.lang['account_info'] % (
+                      user['name'], user['age'], self.lang[user['faculty']], user['desc']),
+                      reply_markup=self.markup['frozenMenu'])
 
     def handle(self, db, bot, update):
         uid = update.message.from_user.id
@@ -147,7 +157,7 @@ class Handler:
             db.updateUserData(uid, 'desc', str(update.message.text))
             db.updateUserDatalogger = logging.getLogger(__name__)
             db.updateUserData(uid, 'dialog_status', 'write_contact')
-            bot.sendMessage(cid, self.lang['write_contact'])
+            bot.sendMessage(cid, self.lang['write_contact'], reply_markup=None, remove_keyboard=True)
         # Write contacts
         elif status == 'write_contact':
             db.updateUserData(uid, 'contact', str(update.message.text))
@@ -166,14 +176,14 @@ class Handler:
                 bot.sendMessage(cid, self.lang['incorrect_answer'])
                 return
             db.updateUserData(uid, 'dialog_status', 'write_p_min_age')
-            bot.sendMessage(cid, self.lang['write_p_min_age'], remove_keyboard=True)
+            bot.sendMessage(cid, self.lang['write_p_min_age'], reply_markup=None, remove_keyboard=True)
 
         # Enter min partner's age
         elif status == 'write_p_min_age':
             if self.valr.validAge(update.message.text):
                 db.updateUserData(uid, 'p_min_age', int(update.message.text))
                 db.updateUserData(uid, 'dialog_status', 'write_p_max_age')
-                bot.sendMessage(cid, self.lang['write_p_max_age'])
+                bot.sendMessage(cid, self.lang['write_p_max_age'], reply_markup=None, remove_keyboard=True)
             else:
                 bot.sendMessage(cid, self.lang['invalid_age'])
 
@@ -183,19 +193,22 @@ class Handler:
             if self.valr.validAge(update.message.text) and int(update.message.text) >= user['p_min_age']:
                 db.updateUserData(uid, 'p_max_age', int(update.message.text))
                 db.updateUserData(uid, 'dialog_status', 'send_photo')
-                bot.sendMessage(cid, self.lang['send_photo'], remove_keyboard=True)
+                bot.sendMessage(cid, self.lang['send_photo'], reply_markup=None, remove_keyboard=True)
             else:
                 bot.sendMessage(cid, self.lang['invalid_age'])
 
         # Handle the photo and ask if all right
         elif status == 'send_photo':
-            photo = update.message.photo[2]
+            try:
+                photo = update.message.photo[2]
+            except IndexError:
+                bot.sendMessage(cid, 'Это не фотография!')
             if self.valr.validPhoto(photo):
 
                 db.updateUserData(uid, 'dialog_status', 'registered')
                 db.updateUserData(uid, 'photo', photo.file_id)
 
-                self.printMe(db, bot, update)
+                self.printMe(db, bot, update, status='False')
                 bot.sendMessage(cid, self.lang['registered'], reply_markup=self.markup['confirmReg'])
             else:
                 bot.sendMessage(cid, self.lang['invalid_photo'])
@@ -250,7 +263,7 @@ class Handler:
                 db.updateUserData(uid, 'dialog_status', 'write_name')
                 bot.sendMessage(cid, self.lang['rewrite'], reply_markup='')
             elif update.message.text == self.lang['menu_show']:
-                self.printMe(db, bot, update)
+                self.printMe(db, bot, update, status='True')
             else:
                 bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu'])
                 # Main menu
@@ -286,9 +299,9 @@ class Handler:
                 db.updateUserData(uid, 'dialog_status', 'write_name')
                 bot.sendMessage(cid, self.lang['rewrite'], reply_markup='')
             elif update.message.text == self.lang['menu_show']:
-                self.printMe(db, bot, update)
+                self.printMe(db, bot, update, status='frozen')
             else:
-                bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu'])
+                bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['frozenMenu'])
         # Other situations
 
         elif status == 'ban':
