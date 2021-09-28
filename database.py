@@ -75,8 +75,12 @@ class Database:
 
         for i in range(len(self.users)):
             if self.users[i]['id'] == id:
-                os.remove('profiles/'+str(self.users[i]['id'])+'.json')
-                self.users.remove(self.users[i])
+                self.users[i]['dialog_status'] = "deleted"
+                self.users[i]['liked'] = []
+                self.updateUserData(self.users[i]['id'], "liked", self.users[i]['liked'])
+                self.users[i]['disliked'] = []
+                self.updateUserData(self.users[i]['id'], "disliked", self.users[i]['disliked'])
+                self.updateUserData(self.users[i]['id'], "dialog_status", self.users[i]['dialog_status'])
                 return
 
     def getUserByID(self, id):

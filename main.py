@@ -50,6 +50,12 @@ def start(bot, update):
             bot.sendMessage(cid, handler.getLang()['already_in'], reply_markup=ReplyKeyboardMarkup(
                 [[KeyboardButton(handler.getLang()['menu_continue'])]],
                 resize_keyboard=True, one_time_keyboard=True))
+        elif user['dialog_status'] == 'deleted':
+            bot.sendMessage(update.message.chat_id, handler.getLang()['privacy_policy'],
+                            reply_markup=ReplyKeyboardMarkup(
+                                [[KeyboardButton(handler.getLang()['acception'])]],
+                                resize_keyboard=True, one_time_keyboard=True))
+            db.updateUserData(int(uid), 'dialog_status', 'privacy_policy_acception')
     # Else register him
     else:
         db.addUser({'id': int(uid), 'chat_id': int(cid), 'dialog_status': 'start', 'liked': [], 'disliked': []})
