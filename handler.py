@@ -310,4 +310,3 @@ class Handler:
         else:
             bot.sendMessage(cid, self.lang['not_understand'])
 
-    def debug(self):
