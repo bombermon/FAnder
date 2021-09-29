@@ -42,6 +42,20 @@ class Database:
         for i in range(len(self.users)):
             if(self.users[i]['id'] == id):
                 self.users[i]['disliked'].append(disliked_id)
+
+    def addReport(self, id, bot, update):   # мы репортнули
+        Reported_id = self.getUserByID(id)['last_profile']
+        for i in range(len(self.users)):
+            if(self.users[i]['id'] == id):
+                self.users[i]['reported'].append(Reported_id)
+
+    def addReported(self, id, bot, update):   # нас репортнули
+        Reported_id = self.getUserByID(id)['last_profile']
+        for i in range(len(self.users)):
+            if(self.users[i]['id'] == Reported_id):
+                self.users[i]['reports'].append(id)
+        return Reported_id
+
     
     def getUsers(self):
         return self.users
