@@ -98,7 +98,7 @@ class Handler:
         for user in users:
             reports = user.get('reports')
             if reports is not None:
-                if len(reports) > 0:
+                if len(reports) > 0 and user["dialog_status"] != "ban":
                     bot.sendPhoto(cid, user['photo'], caption=self.lang['account_info'] % (
                               user['name'], user['age'], self.lang[user['faculty']], user['desc']) + "\n---------------------" + "\nID пользователя " + str(user.get('id')) +
                                                                                                      "\nЖалоб: " + str(
