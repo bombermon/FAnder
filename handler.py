@@ -114,26 +114,47 @@ class Handler:
         status = user['dialog_status']
 
         message = update.message.text
-        words = message.split()
-        if words[0] == "ban" and user.get("admin"):
-            if len(words) > 1:
-                ban_id = int(words[1])
-                for user in db.getUsers():
-                    if user.get('id') is not None and user.get('id') == ban_id:
-                        if user.get("dialog_status") == "ban":
-                            bot.sendMessage(cid, "этот пользователь уже забанен")
+        if message is not None:
+            words = message.split()
+            if words[0] == "ban" and user.get("admin"):
+                if len(words) > 1:
+                    ban_id = int(words[1])
+                    for user in db.getUsers():
+                        if user.get('id') is not None and user.get('id') == ban_id:
+                            if user.get("dialog_status") == "ban":
+                                bot.sendMessage(cid, "этот пользователь уже забанен")
+                                return
+                            if user.get("admin"):
+                                bot.sendMessage(cid, "нельзя банить админа")
+                            else:
+                                db.updateUserData(user.get('id'), 'dialog_status', 'ban')
+                                bot.sendMessage(cid, "пользователь с Id " + words[1] + " забанен")
+                                if len(words) > 2:
+                                    bot.sendMessage(ban_id, "Вы заблокированы по причене:\n" + " ".join(words[2:]))
                             return
-                        if user.get("admin"):
-                            bot.sendMessage(cid, "нельзя банить админа")
-                        else:
-                            db.updateUserData(user.get('id'), 'dialog_status', 'ban')
-                            bot.sendMessage(cid, "пользователь с Id " + words[1] + " забанен")
-                        return
-                bot.sendMessage(cid, "пользователь с таким id не найден")
+                    bot.sendMessage(cid, "пользователь с таким id не найден")
+                    return
+                else:
+                    bot.sendMessage(cid, "не написан id человека, которого нужно забанить. Пример команды: 'ban 123456789'")
                 return
-            else:
-                bot.sendMessage(cid, "не написан id человека, которого нужно забанить. Пример команды: 'ban 123456789'")
-            return
+            if words[0] == "unban" and user.get("admin"):
+                if len(words) > 1:
+                    unban_id = int(words[1])
+                    for user in db.getUsers():
+                        if user.get('id') is not None and user.get('id') == unban_id:
+                            if user.get("dialog_status") == "ban":
+                                db.updateUserData(user.get('id'), 'dialog_status', 'deleted')
+                                bot.sendMessage(cid, "пользователь с Id " + words[1] + " разбанен")
+                                bot.sendMessage(unban_id, "Вы разбанены, напишите '/start' для продолжения")
+                            else:
+                                bot.sendMessage(cid, "этот пользователь не забанен")
+                            return
+
+                    bot.sendMessage(cid, "пользователь с таким id не найден")
+                    return
+                else:
+                    bot.sendMessage(cid, "не написан id человека, которого нужно забанить. Пример команды: 'ban 123456789'")
+                return
 
         # Enter username
         if status == 'privacy_policy_acception':
