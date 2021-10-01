@@ -37,7 +37,7 @@ class Handler:
                                              [KeyboardButton(self.lang['menu_delete'])],
                                              [KeyboardButton(self.lang['menu_edit'])],
                                              [KeyboardButton(self.lang['menu_show'])],
-                                             [KeyboardButton(self.lang['menu_admin'])]], resize_keyboard=True),
+                                             [KeyboardButton(self.lang['menu_admin'])]], resize_keyboard=True, one_time_keyboard=True),
             'adminMenu': ReplyKeyboardMarkup([[KeyboardButton(self.lang['show_all_reported'])],
                                               [KeyboardButton(self.lang['go_menu'])]], resize_keyboard=True,
                                              one_time_keyboard=True),
