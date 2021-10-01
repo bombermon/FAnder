@@ -66,9 +66,17 @@ class Handler:
             if self.valr.checkPartner(user, db.getUsers()[i]):
                 partner = db.getUsers()[i]
                 db.updateUserData(uid, 'last_profile', partner['id'])
-                bot.sendPhoto(cid, partner['photo'], reply_markup=self.markup['markChoice'],
-                              caption=self.lang['account_info'] % (
-                              partner['name'], partner['age'], self.lang[partner['faculty']], partner['desc']), )
+                if user.get("admin"):
+                    bot.sendPhoto(cid, partner['photo'], reply_markup=self.markup['markChoice'],
+                                  caption=self.lang['account_info'] % (
+                                      partner['name'], partner['age'], self.lang[partner['faculty']],
+                                      partner['desc']) + '\n-------------' + '\nID: ' + str(
+                                      partner['id'] ))
+
+                else:
+                    bot.sendPhoto(cid, partner['photo'], reply_markup=self.markup['markChoice'],
+                                  caption=self.lang['account_info'] % (
+                                  partner['name'], partner['age'], self.lang[partner['faculty']], partner['desc']), )
                 return
         if user.get("admin"):
             bot.sendMessage(cid, self.lang['no_partners'], reply_markup=self.markup['mainMenu_admin'])
@@ -81,8 +89,8 @@ class Handler:
         user = db.getUserByID(uid)
         if status == 'True':
             bot.sendPhoto(cid, user['photo'],
-                          caption=self.lang['account_info'] % (user['name'], user['age'], self.lang[user['faculty']], user['desc']),
-                          reply_markup=self.markup['mainMenu'])
+                              caption=self.lang['account_info'] % (user['name'], user['age'], self.lang[user['faculty']], user['desc']),
+                              reply_markup=self.markup['mainMenu'])
         elif status == 'False':
             bot.sendPhoto(cid, user['photo'],
                           caption=self.lang['account_info'] % (
