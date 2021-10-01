@@ -49,6 +49,9 @@ faculty_of_social_sciences_and_mass_communications: "ФСНиМК"
 faculty_of_economics_and_business: "ФЭБ"
 faculty_of_law: "Юрфак"
 faculty_of_taxes_audit_and_business_analysis: "НАБ"
+menu_admin: "🔐 Меню админа"
+in_admin_menu: "вы перешли в меню админа"
+show_all_reported: "показать все жалобы"
 
 
 

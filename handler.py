@@ -31,6 +31,16 @@ class Handler:
                                              [KeyboardButton(self.lang['menu_delete'])],
                                              [KeyboardButton(self.lang['menu_edit'])],
                                              [KeyboardButton(self.lang['menu_show'])]], resize_keyboard=True, one_time_keyboard=True),
+            'mainMenu_admin': ReplyKeyboardMarkup([[KeyboardButton(self.lang['menu_continue'])],
+                                             [KeyboardButton(self.lang['menu_stop'])],
+                                             [KeyboardButton(self.lang['menu_delete'])],
+                                             [KeyboardButton(self.lang['menu_edit'])],
+                                             [KeyboardButton(self.lang['menu_show'])],
+                                             [KeyboardButton(self.lang['menu_admin'])]], resize_keyboard=True,
+                                            one_time_keyboard=True),
+            'adminMenu': ReplyKeyboardMarkup([[KeyboardButton(self.lang['show_all_reported'])],
+                                              [KeyboardButton(self.lang['go_menu'])]], resize_keyboard=True,
+                                             one_time_keyboard=True),
             'frozenMenu': ReplyKeyboardMarkup([[KeyboardButton(self.lang['menu_continue'])],
                                              [KeyboardButton(self.lang['menu_delete'])],
                                              [KeyboardButton(self.lang['menu_edit'])],
@@ -60,7 +70,10 @@ class Handler:
                               caption=self.lang['account_info'] % (
                               partner['name'], partner['age'], self.lang[partner['faculty']], partner['desc']), )
                 return
-        bot.sendMessage(cid, self.lang['no_partners'], reply_markup=self.markup['mainMenu'])
+        if user.get("admin"):
+            bot.sendMessage(cid, self.lang['no_partners'], reply_markup=self.markup['mainMenu_admin'])
+        else:
+            bot.sendMessage(cid, self.lang['no_partners'], reply_markup=self.markup['mainMenu'])
 
     def printMe(self, db, bot, update, status='True'):
         uid = update.message.from_user.id
@@ -79,6 +92,18 @@ class Handler:
                       caption=self.lang['account_info'] % (
                       user['name'], user['age'], self.lang[user['faculty']], user['desc']),
                       reply_markup=self.markup['frozenMenu'])
+
+    def showAllReported(self, cid, db, bot):
+        users = db.getUsers()
+        for user in users:
+            reports = user.get('reported')
+            if reports is not None:
+                if len(reports) > 0:
+                    bot.sendPhoto(cid, user['photo'], caption=self.lang['account_info'] % (
+                              user['name'], user['age'], self.lang[user['faculty']], user['desc']) + "/nreported: " + str(reports),
+                              reply_markup=self.markup['adminMenu'])
+
+
 
     def handle(self, db, bot, update):
         uid = update.message.from_user.id
@@ -247,8 +272,10 @@ class Handler:
                 self.printNext(db, bot, update)
             elif update.message.text == self.lang['go_menu']:
                 db.updateUserData(uid, 'dialog_status', 'in_menu')
-                bot.sendMessage(cid, self.lang['in_menu'], reply_markup=self.markup['mainMenu'])
-
+                if user.get("admin"):
+                    bot.sendMessage(cid, self.lang['in_menu'], reply_markup=self.markup['mainMenu_admin'])
+                else:
+                    bot.sendMessage(cid, self.lang['in_menu'], reply_markup=self.markup['mainMenu'])
 
             elif update.message.text == self.lang['menu_continue']:
                 db.updateUserData(uid, 'dialog_status', 'process')
@@ -264,8 +291,15 @@ class Handler:
                 bot.sendMessage(cid, self.lang['rewrite'], reply_markup='')
             elif update.message.text == self.lang['menu_show']:
                 self.printMe(db, bot, update, status='True')
+            elif update.message.text == self.lang['menu_admin'] and user.get("admin"):
+                db.updateUserData(uid, 'dialog_status', 'in_admin_menu')
+                bot.sendMessage(cid, self.lang['in_admin_menu'], reply_markup=self.markup['adminMenu'])
             else:
-                bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu'])
+                if user.get("admin"):
+                    bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu_admin'])
+                else:
+                    bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu'])
+
                 # Main menu
         elif status == 'in_menu':
             if update.message.text == self.lang['menu_continue']:
@@ -283,8 +317,25 @@ class Handler:
                 bot.sendMessage(cid, self.lang['rewrite'], reply_markup='')
             elif update.message.text == self.lang['menu_show']:
                 self.printMe(db, bot, update)
+            elif update.message.text == self.lang['menu_admin'] and user.get("admin"):
+                db.updateUserData(uid, 'dialog_status', 'in_admin_menu')
+                bot.sendMessage(cid, self.lang['in_admin_menu'], reply_markup=self.markup['adminMenu'])
             else:
-                bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu'])
+                if user.get("admin"):
+                    bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu_admin'])
+                else:
+                    bot.sendMessage(cid, self.lang['incorrect_answer'], reply_markup=self.markup['mainMenu'])
+
+                # admin menu
+        elif status == 'in_admin_menu':
+            if update.message.text == self.lang['go_menu']:
+                db.updateUserData(uid, 'dialog_status', 'in_menu')
+                if user.get("admin"):
+                    bot.sendMessage(cid, self.lang['in_menu'], reply_markup=self.markup['mainMenu_admin'])
+                else:
+                    bot.sendMessage(cid, self.lang['in_menu'], reply_markup=self.markup['mainMenu'])
+            elif update.message.text == self.lang['show_all_reported']:
+                self.showAllReported(cid, db, bot)
 
         # Account is freezed
         elif status == 'freezed':
