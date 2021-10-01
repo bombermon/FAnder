@@ -101,7 +101,7 @@ class Handler:
             if reports is not None:
                 if len(reports) > 0:
                     bot.sendPhoto(cid, user['photo'], caption=self.lang['account_info'] % (
-                              user['name'], user['age'], self.lang[user['faculty']], user['desc']) + "/nreported: " + str(reports),
+                              user['name'], user['age'], self.lang[user['faculty']], user['desc']) + "\nreported: " + str(reports),
                               reply_markup=self.markup['adminMenu'])
 
 
