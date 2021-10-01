@@ -42,6 +42,20 @@ class Database:
         for i in range(len(self.users)):
             if(self.users[i]['id'] == id):
                 self.users[i]['disliked'].append(disliked_id)
+
+    def addReport(self, id, bot, update):   # мы репортнули
+        Reported_id = self.getUserByID(id)['last_profile']
+        for i in range(len(self.users)):
+            if(self.users[i]['id'] == id):
+                self.users[i]['reported'].append(Reported_id)
+
+    def addReported(self, id, bot, update):   # нас репортнули
+        Reported_id = self.getUserByID(id)['last_profile']
+        for i in range(len(self.users)):
+            if(self.users[i]['id'] == Reported_id):
+                self.users[i]['reports'].append(id)
+        return Reported_id
+
     
     def getUsers(self):
         return self.users
@@ -58,20 +72,21 @@ class Database:
         for i in range(len(self.users)):
             if self.users[i].get("disliked") is not None:
                 if id in self.users[i]["disliked"]:
-                    print(id, ' deleted from ', self.users[i]['id'], ' "disliked"')
-                    self.users[i]["disliked"].remove(id)
+                    temp_dis = []
+                    for j in self.users[i]["disliked"]:
+                        if j != id:
+                            temp_dis.append(j)
+                    self.users[i]["disliked"] = temp_dis
                     self.updateUserData(self.users[i]['id'], "disliked", self.users[i]["disliked"])
-            else:
-                print(self.users[i], '\nprofile does not have "disliked" field')
 
             if self.users[i].get("liked") is not None:
                 if id in self.users[i]["liked"]:
-                    print(id, ' deleted from ', self.users[i]['id'], ' "liked"')
-                    self.users[i]["liked"].remove(id)
-                    print(self.users[i]["liked"])
+                    temp_like = []
+                    for j in self.users[i]["liked"]:
+                        if j != id:
+                            temp_like.append(j)
+                    self.users[i]["liked"] = temp_like
                     self.updateUserData(self.users[i]['id'], "liked", self.users[i]["liked"])
-            else:
-                print(self.users[i], '\nprofile does not have "liked" field')
 
         for i in range(len(self.users)):
             if self.users[i]['id'] == id:

@@ -4,6 +4,7 @@ import logging
 import random
 
 
+
 class Handler:
     def __init__(self, lang):
         self.lang = lang
@@ -18,7 +19,7 @@ class Handler:
                                               [KeyboardButton(self.lang['friends'])]],
                                              resize_keyboard=True, one_time_keyboard=True),
             'markChoice': ReplyKeyboardMarkup(
-                [[KeyboardButton(self.lang['like']), KeyboardButton(self.lang['dislike'])], [KeyboardButton(self.lang['go_menu'])]],
+                [[KeyboardButton(self.lang['like']), KeyboardButton(self.lang['dislike'])],  [KeyboardButton(self.lang['report'])], [KeyboardButton(self.lang['go_menu'])]],
                 row_width=2, resize_keyboard=True, one_time_keyboard=False),
             'facultyChoice': ReplyKeyboardMarkup(
                 [[KeyboardButton(self.lang['faculty_of_information_technology_and_big_data_analysis']), KeyboardButton(self.lang['faculty_of_finance'])],
@@ -276,7 +277,17 @@ class Handler:
                     bot.sendMessage(cid, self.lang['in_menu'], reply_markup=self.markup['mainMenu_admin'])
                 else:
                     bot.sendMessage(cid, self.lang['in_menu'], reply_markup=self.markup['mainMenu'])
+            elif update.message.text == self.lang['report']:
+                db.addDisliked(uid, bot, update)
+                db.addReport(uid, bot, update)
 
+                reported_id = db.addReported(uid, bot, update)
+                who_rep = db.getUserByID(reported_id)
+                db.updateUserData(reported_id, 'reports', who_rep['reports'])
+
+                db.updateUserData(uid, 'reported', user['reported'])
+                db.updateUserData(uid, 'disliked', user['disliked'])
+                self.printNext(db, bot, update)
             elif update.message.text == self.lang['menu_continue']:
                 db.updateUserData(uid, 'dialog_status', 'process')
                 self.printNext(db, bot, update)

@@ -56,9 +56,12 @@ def start(bot, update):
                                 [[KeyboardButton(handler.getLang()['acception'])]],
                                 resize_keyboard=True, one_time_keyboard=True))
             db.updateUserData(int(uid), 'dialog_status', 'privacy_policy_acception')
+        else:
+            bot.sendMessage(update.message.chat_id, 'Ты уже писал /start')
+
     # Else register him
     else:
-        db.addUser({'id': int(uid), 'chat_id': int(cid), 'dialog_status': 'start', 'liked': [], 'disliked': []})
+        db.addUser({'id': int(uid), 'chat_id': int(cid), 'dialog_status': 'start', 'liked': [], 'disliked': [], 'reports': [], 'reported': []})
         bot.sendMessage(update.message.chat_id, handler.getLang()['privacy_policy'], reply_markup=ReplyKeyboardMarkup(
                 [[KeyboardButton(handler.getLang()['acception'])]],
                 resize_keyboard=True, one_time_keyboard=True))
