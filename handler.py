@@ -37,8 +37,7 @@ class Handler:
                                              [KeyboardButton(self.lang['menu_delete'])],
                                              [KeyboardButton(self.lang['menu_edit'])],
                                              [KeyboardButton(self.lang['menu_show'])],
-                                             [KeyboardButton(self.lang['menu_admin'])]], resize_keyboard=True,
-                                            one_time_keyboard=True),
+                                             [KeyboardButton(self.lang['menu_admin'])]], resize_keyboard=True),
             'adminMenu': ReplyKeyboardMarkup([[KeyboardButton(self.lang['show_all_reported'])],
                                               [KeyboardButton(self.lang['go_menu'])]], resize_keyboard=True,
                                              one_time_keyboard=True),
@@ -97,11 +96,13 @@ class Handler:
     def showAllReported(self, cid, db, bot):
         users = db.getUsers()
         for user in users:
-            reports = user.get('reported')
+            reports = user.get('reports')
             if reports is not None:
                 if len(reports) > 0:
                     bot.sendPhoto(cid, user['photo'], caption=self.lang['account_info'] % (
-                              user['name'], user['age'], self.lang[user['faculty']], user['desc']) + "\nreported: " + str(reports),
+                              user['name'], user['age'], self.lang[user['faculty']], user['desc']) + "\n---------------------" + "\nID пользователя " + str(user.get('id')) +
+                                                                                                     "\nЖалоб: " + str(
+                        len(reports)) + '\nПожаловались: ' + str(reports),
                               reply_markup=self.markup['adminMenu'])
 
 
