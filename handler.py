@@ -17,6 +17,11 @@ class Handler:
                                                KeyboardButton(self.lang['woman'])],
                                               [KeyboardButton(self.lang['friends'])]],
                                              resize_keyboard=True, one_time_keyboard=True),
+
+            'filter': ReplyKeyboardMarkup([[KeyboardButton(self.lang['only_u']),
+                                               KeyboardButton(self.lang['all'])],
+                                              [KeyboardButton(self.lang['all_without'])]],
+                                             resize_keyboard=True, one_time_keyboard=True),
             'markChoice': ReplyKeyboardMarkup(
                 [[KeyboardButton(self.lang['like']), KeyboardButton(self.lang['dislike'])],
                  [KeyboardButton(self.lang['report'])], [KeyboardButton(self.lang['go_menu'])]],
@@ -86,14 +91,14 @@ class Handler:
                 if user.get("admin"):
                     bot.sendPhoto(cid, partner['photo'], reply_markup=self.markup['markChoice'],
                                   caption=self.lang['account_info'] % (
-                                      partner['name'], partner['age'], self.lang[partner['faculty']],
+                                      partner['name'], partner['age'], self.lang[partner['university']],
                                       partner['desc']) + '\n-------------' + '\nID: ' + str(
                                       partner['id']))
 
                 else:
                     bot.sendPhoto(cid, partner['photo'], reply_markup=self.markup['markChoice'],
                                   caption=self.lang['account_info'] % (
-                                      partner['name'], partner['age'], self.lang[partner['faculty']],
+                                      partner['name'], partner['age'], self.lang[partner['university']],
                                       partner['desc']), )
                 return
         if user.get("admin"):
@@ -108,16 +113,16 @@ class Handler:
         if status == 'True':
             bot.sendPhoto(cid, user['photo'],
                           caption=self.lang['account_info'] % (
-                          user['name'], user['age'], self.lang[user['university']], self.lang[user['faculty']], user['desc']),
+                          user['name'], user['age'], self.lang[user['university']],  user['desc']),
                           reply_markup=self.markup['mainMenu'])
         elif status == 'False':
             bot.sendPhoto(cid, user['photo'],
                           caption=self.lang['account_info'] % (
-                              user['name'], user['age'], self.lang[user['university']], self.lang[user['faculty']], user['desc']))
+                              user['name'], user['age'], self.lang[user['university']],  user['desc']))
         elif status == 'frozen':
             bot.sendPhoto(cid, user['photo'],
                           caption=self.lang['account_info'] % (
-                              user['name'], user['age'], self.lang[user['university']], self.lang[user['faculty']], user['desc']),
+                              user['name'], user['age'], self.lang[user['university']],  user['desc']),
                           reply_markup=self.markup['frozenMenu'])
 
     def showAllReported(self, cid, db, bot):
@@ -127,7 +132,7 @@ class Handler:
             if reports is not None:
                 if len(reports) > 0 and user["dialog_status"] != "ban":
                     bot.sendPhoto(cid, user['photo'], caption=self.lang['account_info'] % (
-                        user['name'], user['age'], self.lang[user['faculty']],
+                        user['name'], user['age'],
                         user['desc']) + "\n---------------------" + "\nID пользователя " + str(user.get('id')) +
                                                               "\nЖалоб: " + str(
                         len(reports)) + '\nПожаловались: ' + str(reports),
@@ -254,32 +259,34 @@ class Handler:
             else:
                 bot.sendMessage(cid, self.lang['incorrect_answer'])
                 return
-            db.updateUserData(uid, 'dialog_status', 'write_faculty')
-            bot.sendMessage(cid, self.lang['write_faculty'], reply_markup=self.markup['facultyChoice'])
-
-        # Write faculty (Факультет)
-        elif status == 'write_faculty':
-            if update.message.text == self.lang['faculty_of_information_technology_and_big_data_analysis']:
-                db.updateUserData(uid, 'faculty', "faculty_of_information_technology_and_big_data_analysis")
-            elif update.message.text == self.lang['faculty_of_finance']:
-                db.updateUserData(uid, 'faculty', 'faculty_of_finance')
-            elif update.message.text == self.lang['higher_school_of_management']:
-                db.updateUserData(uid, 'faculty', 'higher_school_of_management')
-            elif update.message.text == self.lang['faculty_of_international_economic_relations']:
-                db.updateUserData(uid, 'faculty', 'faculty_of_international_economic_relations')
-            elif update.message.text == self.lang['faculty_of_social_sciences_and_mass_communications']:
-                db.updateUserData(uid, 'faculty', 'faculty_of_social_sciences_and_mass_communications')
-            elif update.message.text == self.lang['faculty_of_economics_and_business']:
-                db.updateUserData(uid, 'faculty', 'faculty_of_economics_and_business')
-            elif update.message.text == self.lang['faculty_of_law']:
-                db.updateUserData(uid, 'faculty', 'faculty_of_law')
-            elif update.message.text == self.lang['faculty_of_taxes_audit_and_business_analysis']:
-                db.updateUserData(uid, 'faculty', 'faculty_of_taxes_audit_and_business_analysis')
-            else:
-                bot.sendMessage(cid, self.lang['incorrect_answer'])
-                return
             db.updateUserData(uid, 'dialog_status', 'write_desc')
             bot.sendMessage(cid, self.lang['write_desc'], reply_markup=None, remove_keyboard=True)
+            #db.updateUserData(uid, 'dialog_status', 'write_faculty')
+            #bot.sendMessage(cid, self.lang['write_faculty'], reply_markup=self.markup['facultyChoice'])
+
+        # Write faculty (Факультет)
+        #elif status == 'write_faculty':
+        #    if update.message.text == self.lang['faculty_of_information_technology_and_big_data_analysis']:
+        #        db.updateUserData(uid, 'faculty', "faculty_of_information_technology_and_big_data_analysis")
+        #    elif update.message.text == self.lang['faculty_of_finance']:
+        #        db.updateUserData(uid, 'faculty', 'faculty_of_finance')
+        #    elif update.message.text == self.lang['higher_school_of_management']:
+        #        db.updateUserData(uid, 'faculty', 'higher_school_of_management')
+        #    elif update.message.text == self.lang['faculty_of_international_economic_relations']:
+        #        db.updateUserData(uid, 'faculty', 'faculty_of_international_economic_relations')
+        #    elif update.message.text == self.lang['faculty_of_social_sciences_and_mass_communications']:
+        #        db.updateUserData(uid, 'faculty', 'faculty_of_social_sciences_and_mass_communications')
+        #    elif update.message.text == self.lang['faculty_of_economics_and_business']:
+        #        db.updateUserData(uid, 'faculty', 'faculty_of_economics_and_business')
+        #    elif update.message.text == self.lang['faculty_of_law']:
+        #        db.updateUserData(uid, 'faculty', 'faculty_of_law')
+        #    elif update.message.text == self.lang['faculty_of_taxes_audit_and_business_analysis']:
+        #        db.updateUserData(uid, 'faculty', 'faculty_of_taxes_audit_and_business_analysis')
+        #    else:
+        #        bot.sendMessage(cid, self.lang['incorrect_answer'])
+        #        return
+        #    db.updateUserData(uid, 'dialog_status', 'write_desc')
+        #    bot.sendMessage(cid, self.lang['write_desc'], reply_markup=None, remove_keyboard=True)
 
         # Write description
         elif status == 'write_desc':
@@ -321,10 +328,23 @@ class Handler:
             user = db.getUserByID(uid)
             if self.valr.validAge(update.message.text) and int(update.message.text) >= user['p_min_age']:
                 db.updateUserData(uid, 'p_max_age', int(update.message.text))
-                db.updateUserData(uid, 'dialog_status', 'send_photo')
-                bot.sendMessage(cid, self.lang['send_photo'], reply_markup=None, remove_keyboard=True)
+                db.updateUserData(uid, 'dialog_status', 'filter')
+                bot.sendMessage(cid, self.lang['filter'], reply_markup=self.markup['filter'])
             else:
                 bot.sendMessage(cid, self.lang['invalid_age'])
+
+        elif status == 'filter':
+            if update.message.text == self.lang['only_u']:
+                db.updateUserData(uid, 'filter', 0)
+            elif update.message.text == self.lang['all']:
+                db.updateUserData(uid, 'filter', 1)
+            elif update.message.text == self.lang['all_without']:
+                db.updateUserData(uid, 'filter', 2)
+            else:
+                bot.sendMessage(cid, self.lang['incorrect_answer'])
+                return
+            db.updateUserData(uid, 'dialog_status', 'send_photo')
+            bot.sendMessage(cid, self.lang['send_photo'], reply_markup=None, remove_keyboard=True)
 
         # Handle the photo and ask if all right
         elif status == 'send_photo':
