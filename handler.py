@@ -21,6 +21,16 @@ class Handler:
                 [[KeyboardButton(self.lang['like']), KeyboardButton(self.lang['dislike'])],
                  [KeyboardButton(self.lang['report'])], [KeyboardButton(self.lang['go_menu'])]],
                 row_width=2, resize_keyboard=True, one_time_keyboard=False),
+            'universityChoice': ReplyKeyboardMarkup(
+                [[KeyboardButton(self.lang['financial_university']),
+                  KeyboardButton(self.lang['ranepa'])],
+                 [KeyboardButton(self.lang['mai']),
+                  KeyboardButton(self.lang['bmstu'])],
+                 [KeyboardButton(self.lang['rudn_university']),
+                  KeyboardButton(self.lang['rsmu'])],
+                 [KeyboardButton(self.lang['moscow_state_pedagogical_university']),
+                  KeyboardButton(self.lang['rsuh'])]],
+                row_width=2, resize_keyboard=True, one_time_keyboard=True),
             'facultyChoice': ReplyKeyboardMarkup(
                 [[KeyboardButton(self.lang['faculty_of_information_technology_and_big_data_analysis']),
                   KeyboardButton(self.lang['faculty_of_finance'])],
@@ -98,16 +108,16 @@ class Handler:
         if status == 'True':
             bot.sendPhoto(cid, user['photo'],
                           caption=self.lang['account_info'] % (
-                          user['name'], user['age'], self.lang[user['faculty']], user['desc']),
+                          user['name'], user['age'], self.lang[user['university']], self.lang[user['faculty']], user['desc']),
                           reply_markup=self.markup['mainMenu'])
         elif status == 'False':
             bot.sendPhoto(cid, user['photo'],
                           caption=self.lang['account_info'] % (
-                              user['name'], user['age'], self.lang[user['faculty']], user['desc']))
+                              user['name'], user['age'], self.lang[user['university']], self.lang[user['faculty']], user['desc']))
         elif status == 'frozen':
             bot.sendPhoto(cid, user['photo'],
                           caption=self.lang['account_info'] % (
-                              user['name'], user['age'], self.lang[user['faculty']], user['desc']),
+                              user['name'], user['age'], self.lang[user['university']], self.lang[user['faculty']], user['desc']),
                           reply_markup=self.markup['frozenMenu'])
 
     def showAllReported(self, cid, db, bot):
@@ -217,6 +227,30 @@ class Handler:
                 db.updateUserData(uid, 'sex', 0)
             elif update.message.text == self.lang['woman']:
                 db.updateUserData(uid, 'sex', 1)
+            else:
+                bot.sendMessage(cid, self.lang['incorrect_answer'])
+                return
+            db.updateUserData(uid, 'dialog_status', 'write_university')
+            bot.sendMessage(cid, self.lang['write_university'], reply_markup=self.markup['universityChoice'])
+
+        # Write university
+        elif status == 'write_university':
+            if update.message.text == self.lang['financial_university']:
+                db.updateUserData(uid, 'university', "financial_university")
+            elif update.message.text == self.lang['ranepa']:
+                db.updateUserData(uid, 'university', 'ranepa')
+            elif update.message.text == self.lang['mai']:
+                db.updateUserData(uid, 'university', 'mai')
+            elif update.message.text == self.lang['bmstu']:
+                db.updateUserData(uid, 'university', 'bmstu')
+            elif update.message.text == self.lang['rudn_university']:
+                db.updateUserData(uid, 'university', 'rudn_university')
+            elif update.message.text == self.lang['rsmu']:
+                db.updateUserData(uid, 'university', 'rsmu')
+            elif update.message.text == self.lang['moscow_state_pedagogical_university']:
+                db.updateUserData(uid, 'university', 'moscow_state_pedagogical_university')
+            elif update.message.text == self.lang['rsuh']:
+                db.updateUserData(uid, 'university', 'rsuh')
             else:
                 bot.sendMessage(cid, self.lang['incorrect_answer'])
                 return
