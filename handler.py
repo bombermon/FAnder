@@ -4,7 +4,6 @@ import logging
 import random
 
 
-
 class Handler:
     def __init__(self, lang):
         self.lang = lang
@@ -12,39 +11,47 @@ class Handler:
         self.logger = logging.getLogger(__name__)
         self.markup = {
             'sexChoice_user': ReplyKeyboardMarkup([[KeyboardButton(self.lang['man']),
-                                              KeyboardButton(self.lang['woman'])]],
-                                             resize_keyboard=True, one_time_keyboard=True),
+                                                    KeyboardButton(self.lang['woman'])]],
+                                                  resize_keyboard=True, one_time_keyboard=True),
             'sexChoice': ReplyKeyboardMarkup([[KeyboardButton(self.lang['man']),
                                                KeyboardButton(self.lang['woman'])],
                                               [KeyboardButton(self.lang['friends'])]],
                                              resize_keyboard=True, one_time_keyboard=True),
             'markChoice': ReplyKeyboardMarkup(
-                [[KeyboardButton(self.lang['like']), KeyboardButton(self.lang['dislike'])],  [KeyboardButton(self.lang['report'])], [KeyboardButton(self.lang['go_menu'])]],
+                [[KeyboardButton(self.lang['like']), KeyboardButton(self.lang['dislike'])],
+                 [KeyboardButton(self.lang['report'])], [KeyboardButton(self.lang['go_menu'])]],
                 row_width=2, resize_keyboard=True, one_time_keyboard=False),
             'facultyChoice': ReplyKeyboardMarkup(
-                [[KeyboardButton(self.lang['faculty_of_information_technology_and_big_data_analysis']), KeyboardButton(self.lang['faculty_of_finance'])],
-                 [KeyboardButton(self.lang['higher_school_of_management']), KeyboardButton(self.lang['faculty_of_international_economic_relations'])],
-                 [KeyboardButton(self.lang['faculty_of_social_sciences_and_mass_communications']), KeyboardButton(self.lang['faculty_of_economics_and_business'])],
-                 [KeyboardButton(self.lang['faculty_of_law']), KeyboardButton(self.lang['faculty_of_taxes_audit_and_business_analysis'])]],
+                [[KeyboardButton(self.lang['faculty_of_information_technology_and_big_data_analysis']),
+                  KeyboardButton(self.lang['faculty_of_finance'])],
+                 [KeyboardButton(self.lang['higher_school_of_management']),
+                  KeyboardButton(self.lang['faculty_of_international_economic_relations'])],
+                 [KeyboardButton(self.lang['faculty_of_social_sciences_and_mass_communications']),
+                  KeyboardButton(self.lang['faculty_of_economics_and_business'])],
+                 [KeyboardButton(self.lang['faculty_of_law']),
+                  KeyboardButton(self.lang['faculty_of_taxes_audit_and_business_analysis'])]],
                 row_width=2, resize_keyboard=True, one_time_keyboard=True),
             'mainMenu': ReplyKeyboardMarkup([[KeyboardButton(self.lang['menu_continue'])],
                                              [KeyboardButton(self.lang['menu_stop'])],
                                              [KeyboardButton(self.lang['menu_delete'])],
                                              [KeyboardButton(self.lang['menu_edit'])],
-                                             [KeyboardButton(self.lang['menu_show'])]], resize_keyboard=True, one_time_keyboard=True),
+                                             [KeyboardButton(self.lang['menu_show'])]], resize_keyboard=True,
+                                            one_time_keyboard=True),
             'mainMenu_admin': ReplyKeyboardMarkup([[KeyboardButton(self.lang['menu_continue'])],
-                                             [KeyboardButton(self.lang['menu_stop'])],
-                                             [KeyboardButton(self.lang['menu_delete'])],
-                                             [KeyboardButton(self.lang['menu_edit'])],
-                                             [KeyboardButton(self.lang['menu_show'])],
-                                             [KeyboardButton(self.lang['menu_admin'])]], resize_keyboard=True, one_time_keyboard=True),
+                                                   [KeyboardButton(self.lang['menu_stop'])],
+                                                   [KeyboardButton(self.lang['menu_delete'])],
+                                                   [KeyboardButton(self.lang['menu_edit'])],
+                                                   [KeyboardButton(self.lang['menu_show'])],
+                                                   [KeyboardButton(self.lang['menu_admin'])]], resize_keyboard=True,
+                                                  one_time_keyboard=True),
             'adminMenu': ReplyKeyboardMarkup([[KeyboardButton(self.lang['show_all_reported'])],
                                               [KeyboardButton(self.lang['go_menu'])]], resize_keyboard=True,
                                              one_time_keyboard=True),
             'frozenMenu': ReplyKeyboardMarkup([[KeyboardButton(self.lang['menu_continue'])],
-                                             [KeyboardButton(self.lang['menu_delete'])],
-                                             [KeyboardButton(self.lang['menu_edit'])],
-                                             [KeyboardButton(self.lang['menu_show'])]], resize_keyboard=True, one_time_keyboard=True),
+                                               [KeyboardButton(self.lang['menu_delete'])],
+                                               [KeyboardButton(self.lang['menu_edit'])],
+                                               [KeyboardButton(self.lang['menu_show'])]], resize_keyboard=True,
+                                              one_time_keyboard=True),
             'confirmReg': ReplyKeyboardMarkup(
                 [[KeyboardButton(self.lang['confirm_reg'])],
                  [KeyboardButton(self.lang['repeat_reg'])]],
@@ -62,7 +69,7 @@ class Handler:
         uid = update.message.from_user.id
         cid = update.message.chat_id
         user = db.getUserByID(uid)
-        for i in random.sample(range(0, len(db.getUsers())),len(db.getUsers())):
+        for i in random.sample(range(0, len(db.getUsers())), len(db.getUsers())):
             if self.valr.checkPartner(user, db.getUsers()[i]):
                 partner = db.getUsers()[i]
                 db.updateUserData(uid, 'last_profile', partner['id'])
@@ -71,12 +78,13 @@ class Handler:
                                   caption=self.lang['account_info'] % (
                                       partner['name'], partner['age'], self.lang[partner['faculty']],
                                       partner['desc']) + '\n-------------' + '\nID: ' + str(
-                                      partner['id'] ))
+                                      partner['id']))
 
                 else:
                     bot.sendPhoto(cid, partner['photo'], reply_markup=self.markup['markChoice'],
                                   caption=self.lang['account_info'] % (
-                                  partner['name'], partner['age'], self.lang[partner['faculty']], partner['desc']), )
+                                      partner['name'], partner['age'], self.lang[partner['faculty']],
+                                      partner['desc']), )
                 return
         if user.get("admin"):
             bot.sendMessage(cid, self.lang['no_partners'], reply_markup=self.markup['mainMenu_admin'])
@@ -89,17 +97,18 @@ class Handler:
         user = db.getUserByID(uid)
         if status == 'True':
             bot.sendPhoto(cid, user['photo'],
-                              caption=self.lang['account_info'] % (user['name'], user['age'], self.lang[user['faculty']], user['desc']),
-                              reply_markup=self.markup['mainMenu'])
+                          caption=self.lang['account_info'] % (
+                          user['name'], user['age'], self.lang[user['faculty']], user['desc']),
+                          reply_markup=self.markup['mainMenu'])
         elif status == 'False':
             bot.sendPhoto(cid, user['photo'],
                           caption=self.lang['account_info'] % (
-                          user['name'], user['age'], self.lang[user['faculty']], user['desc']))
+                              user['name'], user['age'], self.lang[user['faculty']], user['desc']))
         elif status == 'frozen':
             bot.sendPhoto(cid, user['photo'],
-                      caption=self.lang['account_info'] % (
-                      user['name'], user['age'], self.lang[user['faculty']], user['desc']),
-                      reply_markup=self.markup['frozenMenu'])
+                          caption=self.lang['account_info'] % (
+                              user['name'], user['age'], self.lang[user['faculty']], user['desc']),
+                          reply_markup=self.markup['frozenMenu'])
 
     def showAllReported(self, cid, db, bot):
         users = db.getUsers()
@@ -108,12 +117,11 @@ class Handler:
             if reports is not None:
                 if len(reports) > 0 and user["dialog_status"] != "ban":
                     bot.sendPhoto(cid, user['photo'], caption=self.lang['account_info'] % (
-                              user['name'], user['age'], self.lang[user['faculty']], user['desc']) + "\n---------------------" + "\nID пользователя " + str(user.get('id')) +
-                                                                                                     "\nЖалоб: " + str(
+                        user['name'], user['age'], self.lang[user['faculty']],
+                        user['desc']) + "\n---------------------" + "\nID пользователя " + str(user.get('id')) +
+                                                              "\nЖалоб: " + str(
                         len(reports)) + '\nПожаловались: ' + str(reports),
-                              reply_markup=self.markup['adminMenu'])
-
-
+                                  reply_markup=self.markup['adminMenu'])
 
     def handle(self, db, bot, update):
         uid = update.message.from_user.id
@@ -143,7 +151,8 @@ class Handler:
                     bot.sendMessage(cid, "пользователь с таким id не найден")
                     return
                 else:
-                    bot.sendMessage(cid, "не написан id человека, которого нужно забанить. Пример команды: 'ban 123456789'")
+                    bot.sendMessage(cid,
+                                    "не написан id человека, которого нужно забанить. Пример команды: 'ban 123456789'")
                 return
             if words[0] == "unban" and user.get("admin"):
                 if len(words) > 1:
@@ -161,8 +170,16 @@ class Handler:
                     bot.sendMessage(cid, "пользователь с таким id не найден")
                     return
                 else:
-                    bot.sendMessage(cid, "не написан id человека, которого нужно забанить. Пример команды: 'ban 123456789'")
+                    bot.sendMessage(cid,
+                                    "не написан id человека, которого нужно забанить. Пример команды: 'ban 123456789'")
                 return
+            if words[0] == "sayeverybody" and user.get("admin"):
+                for user in db.getUsers():
+                    try:
+                        send = user.get('id')
+                        bot.sendMessage(send, " ".join(words[1:]))
+                    except:
+                        pass
 
         # Enter username
         if status == 'privacy_policy_acception':
@@ -229,7 +246,7 @@ class Handler:
                 return
             db.updateUserData(uid, 'dialog_status', 'write_desc')
             bot.sendMessage(cid, self.lang['write_desc'], reply_markup=None, remove_keyboard=True)
-        
+
         # Write description
         elif status == 'write_desc':
             db.updateUserData(uid, 'desc', str(update.message.text))

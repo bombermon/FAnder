@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import logging
 import yaml
 import codecs
@@ -30,7 +32,7 @@ def init_bot(config, lang, token):
     dp.add_error_handler(error)
 
     # Start broadcasting thread
-    #bc.start()
+    # bc.start()
 
     # Start bot
     updater.start_polling()
@@ -45,7 +47,7 @@ def start(bot, update):
     user = db.getUserByID(int(uid))
 
     # If found, continue
-    if(user != None):
+    if (user != None):
         if user['dialog_status'] == 'process':
             bot.sendMessage(cid, handler.getLang()['already_in'], reply_markup=ReplyKeyboardMarkup(
                 [[KeyboardButton(handler.getLang()['menu_continue'])]],
@@ -61,10 +63,12 @@ def start(bot, update):
 
     # Else register him
     else:
-        db.addUser({'id': int(uid), 'chat_id': int(cid), 'dialog_status': 'start', 'liked': [], 'disliked': [], 'reports': [], 'reported': []})
+        db.addUser(
+            {'id': int(uid), 'chat_id': int(cid), 'dialog_status': 'start', 'liked': [], 'disliked': [], 'reports': [],
+             'reported': []})
         bot.sendMessage(update.message.chat_id, handler.getLang()['privacy_policy'], reply_markup=ReplyKeyboardMarkup(
-                [[KeyboardButton(handler.getLang()['acception'])]],
-                resize_keyboard=True, one_time_keyboard=True))
+            [[KeyboardButton(handler.getLang()['acception'])]],
+            resize_keyboard=True, one_time_keyboard=True))
         db.updateUserData(int(uid), 'dialog_status', 'privacy_policy_acception')
 
 
@@ -92,7 +96,7 @@ def main():
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     logger = logging.getLogger(__name__)
-    
+
     try:
         config = None
         lang = None
@@ -105,7 +109,7 @@ def main():
         with codecs.open(langFileName, 'r', 'utf_8_sig') as stream:
             lang = yaml.load(stream, Loader=yaml.SafeLoader)
     except IOError as err:
-        print(err) 
+        print(err)
         print('An error occured while reading config files')
         exit()
 
