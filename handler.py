@@ -29,12 +29,13 @@ class Handler:
             'universityChoice': ReplyKeyboardMarkup(
                 [[KeyboardButton(self.lang['financial_university']),
                   KeyboardButton(self.lang['ranepa'])],
-                 [KeyboardButton(self.lang['mai']),
+                 [KeyboardButton(self.lang['msu']),
                   KeyboardButton(self.lang['bmstu'])],
-                 [KeyboardButton(self.lang['rudn_university']),
-                  KeyboardButton(self.lang['rsmu'])],
-                 [KeyboardButton(self.lang['moscow_state_pedagogical_university']),
-                  KeyboardButton(self.lang['rsuh'])]],
+                # [KeyboardButton(self.lang['rudn_university']),
+                #  KeyboardButton(self.lang['rsmu'])],
+                # [KeyboardButton(self.lang['moscow_state_pedagogical_university']),
+                #  KeyboardButton(self.lang['rsuh'])]
+                 ],
                 row_width=2, resize_keyboard=True, one_time_keyboard=True),
             'facultyChoice': ReplyKeyboardMarkup(
                 [[KeyboardButton(self.lang['faculty_of_information_technology_and_big_data_analysis']),
@@ -244,18 +245,10 @@ class Handler:
                 db.updateUserData(uid, 'university', "financial_university")
             elif update.message.text == self.lang['ranepa']:
                 db.updateUserData(uid, 'university', 'ranepa')
-            elif update.message.text == self.lang['mai']:
-                db.updateUserData(uid, 'university', 'mai')
+            elif update.message.text == self.lang['msu']:
+                db.updateUserData(uid, 'university', 'msu')
             elif update.message.text == self.lang['bmstu']:
                 db.updateUserData(uid, 'university', 'bmstu')
-            elif update.message.text == self.lang['rudn_university']:
-                db.updateUserData(uid, 'university', 'rudn_university')
-            elif update.message.text == self.lang['rsmu']:
-                db.updateUserData(uid, 'university', 'rsmu')
-            elif update.message.text == self.lang['moscow_state_pedagogical_university']:
-                db.updateUserData(uid, 'university', 'moscow_state_pedagogical_university')
-            elif update.message.text == self.lang['rsuh']:
-                db.updateUserData(uid, 'university', 'rsuh')
             else:
                 bot.sendMessage(cid, self.lang['incorrect_answer'])
                 return
