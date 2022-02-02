@@ -22,7 +22,7 @@ class Validator:
         #uCity = user['city'].lower().strip()
 
 
-        if ((partner['dialog_status'] == "process") or (partner['dialog_status'] == "in_menu")):
+        if ((partner['dialog_status'] == "process") or (partner['dialog_status'] == "in_menu") or (partner['dialog_status'] == "reset_filter")):
             # ДОБАВИТЬ ЗДЕСЬ СТРОЧКУ ПРОВЕРКУ НА НАХОЖДЕНИЕ ЮЗЕРА В СПИСКЕ АДМИНОВ
             if (partner['id'] != user['id']) and (partner['age'] >= user['p_min_age']) and (partner['age'] <= user['p_max_age']):
                 if (partner['id'] not in user['liked']) and (partner['id'] not in user['disliked']):

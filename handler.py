@@ -427,6 +427,9 @@ class Handler:
             elif update.message.text == self.lang['menu_delete']:
                 bot.sendMessage(cid, self.lang['profile_removed'], reply_markup='')
                 db.removeUser(uid)
+            elif update.message.text == self.lang['menu_filter']:
+                db.updateUserData(uid, 'dialog_status', 'reset_filter')
+                bot.sendMessage(cid, self.lang['filter'], reply_markup=self.markup['filter'])
             elif update.message.text == self.lang['menu_edit']:
                 db.updateUserData(uid, 'dialog_status', 'write_name')
                 bot.sendMessage(cid, self.lang['rewrite'], reply_markup='')
@@ -449,6 +452,11 @@ class Handler:
             elif update.message.text == self.lang['menu_stop']:
                 db.updateUserData(uid, 'dialog_status', 'freezed')
                 bot.sendMessage(cid, self.lang['profile_freezed'], reply_markup=self.markup['frozenMenu'])
+                ###
+            elif update.message.text == self.lang['menu_filter']:
+                db.updateUserData(uid, 'dialog_status', 'reset_filter')
+                bot.sendMessage(cid, self.lang['filter'], reply_markup=self.markup['filter'])
+
             elif update.message.text == self.lang['menu_delete']:
                 bot.sendMessage(cid, self.lang['profile_removed'], reply_markup='')
                 db.removeUser(uid)
@@ -486,7 +494,9 @@ class Handler:
             elif update.message.text == self.lang['menu_delete']:
                 bot.sendMessage(cid, self.lang['profile_removed'], reply_markup='')
                 db.removeUser(uid)
-
+            elif update.message.text == self.lang['menu_filter']:
+                db.updateUserData(uid, 'dialog_status', 'reset_filter')
+                bot.sendMessage(cid, self.lang['filter'], reply_markup=self.markup['filter'])
             elif update.message.text == self.lang['menu_edit']:
                 db.updateUserData(uid, 'dialog_status', 'write_name')
                 bot.sendMessage(cid, self.lang['rewrite'], reply_markup='')
