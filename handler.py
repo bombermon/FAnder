@@ -339,6 +339,20 @@ class Handler:
             db.updateUserData(uid, 'dialog_status', 'send_photo')
             bot.sendMessage(cid, self.lang['send_photo'], reply_markup=None, remove_keyboard=True)
 
+        elif status == 'reset_filter':
+            if update.message.text == self.lang['only_u']:
+                db.updateUserData(uid, 'filter', 0)
+            elif update.message.text == self.lang['all']:
+                db.updateUserData(uid, 'filter', 1)
+            elif update.message.text == self.lang['all_without']:
+                db.updateUserData(uid, 'filter', 2)
+            else:
+                bot.sendMessage(cid, self.lang['incorrect_answer'])
+                return
+            db.updateUserData(uid, 'dialog_status', 'process')
+            db.saveUser(uid)
+            self.printNext(db, bot, update)
+
         # Handle the photo and ask if all right
         elif status == 'send_photo':
             try:
