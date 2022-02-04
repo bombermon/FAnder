@@ -22,10 +22,14 @@ class Handler:
                                                KeyboardButton(self.lang['all'])],
                                               [KeyboardButton(self.lang['all_without'])]],
                                              resize_keyboard=True, one_time_keyboard=True),
+            'del_acception': ReplyKeyboardMarkup([[KeyboardButton(self.lang['del_yes']),
+                                            KeyboardButton(self.lang['del_no'])]],
+                                          resize_keyboard=True, one_time_keyboard=True),
             'markChoice': ReplyKeyboardMarkup(
                 [[KeyboardButton(self.lang['like']), KeyboardButton(self.lang['dislike'])],
                  [KeyboardButton(self.lang['report'])], [KeyboardButton(self.lang['go_menu'])]],
                 row_width=2, resize_keyboard=True, one_time_keyboard=False),
+
             'universityChoice': ReplyKeyboardMarkup(
                 [[KeyboardButton(self.lang['financial_university']),
                   KeyboardButton(self.lang['ranepa'])],
@@ -130,10 +134,11 @@ class Handler:
         users = db.getUsers()
         for user in users:
             reports = user.get('reports')
-            if reports is not None:
+            ifbanned =  user.get('dialog_status')
+            if reports is not None and ifbanned != "ban":
                 if len(reports) > 0 and user["dialog_status"] != "ban":
                     bot.sendPhoto(cid, user['photo'], caption=self.lang['account_info'] % (
-                        user['name'], user['age'],
+                        user['name'], user['age'], self.lang[user['university']],
                         user['desc']) + "\n---------------------" + "\nID пользователя " + str(user.get('id')) +
                                                               "\nЖалоб: " + str(
                         len(reports)) + '\nПожаловались: ' + str(reports),
@@ -177,6 +182,7 @@ class Handler:
                         if user.get('id') is not None and user.get('id') == unban_id:
                             if user.get("dialog_status") == "ban":
                                 db.updateUserData(user.get('id'), 'dialog_status', 'deleted')
+                                db.updateUserData(user.get('id'), 'reports', [])
                                 bot.sendMessage(cid, "пользователь с Id " + words[1] + " разбанен")
                                 bot.sendMessage(unban_id, "Вы разбанены, напишите '/start' для продолжения")
                             else:
@@ -353,6 +359,19 @@ class Handler:
             db.saveUser(uid)
             self.printNext(db, bot, update)
 
+        elif status == 'del_confirm':
+            if update.message.text == self.lang['del_yes']:
+                bot.sendMessage(cid, self.lang['profile_removed'], reply_markup='')
+                db.removeUser(uid)
+            elif update.message.text == self.lang['del_no']:
+                db.updateUserData(uid, 'dialog_status', 'in_menu')
+                bot.sendMessage(cid, "Вы были перемещены в меню, ваша анкета активна\nСпасибо, что пользуетесь ботом ❤", reply_markup=self.markup['mainMenu'])
+                db.saveUser(uid)
+            else:
+                bot.sendMessage(cid, self.lang['incorrect_answer'])
+                return
+
+
         # Handle the photo and ask if all right
         elif status == 'send_photo':
             try:
@@ -425,8 +444,8 @@ class Handler:
                 db.updateUserData(uid, 'dialog_status', 'freezed')
                 bot.sendMessage(cid, self.lang['profile_freezed'], reply_markup=self.markup['frozenMenu'])
             elif update.message.text == self.lang['menu_delete']:
-                bot.sendMessage(cid, self.lang['profile_removed'], reply_markup='')
-                db.removeUser(uid)
+                db.updateUserData(uid, 'dialog_status', 'del_confirm')
+                bot.sendMessage(cid, self.lang['del_accept'], reply_markup=self.markup['del_acception'])
             elif update.message.text == self.lang['menu_filter']:
                 db.updateUserData(uid, 'dialog_status', 'reset_filter')
                 bot.sendMessage(cid, self.lang['filter'], reply_markup=self.markup['filter'])
@@ -458,8 +477,8 @@ class Handler:
                 bot.sendMessage(cid, self.lang['filter'], reply_markup=self.markup['filter'])
 
             elif update.message.text == self.lang['menu_delete']:
-                bot.sendMessage(cid, self.lang['profile_removed'], reply_markup='')
-                db.removeUser(uid)
+                db.updateUserData(uid, 'dialog_status', 'del_confirm')
+                bot.sendMessage(cid, self.lang['del_accept'], reply_markup=self.markup['del_acception'])
 
             elif update.message.text == self.lang['menu_edit']:
                 db.updateUserData(uid, 'dialog_status', 'write_name')
@@ -492,8 +511,8 @@ class Handler:
                 db.updateUserData(uid, 'dialog_status', 'process')
                 self.printNext(db, bot, update)
             elif update.message.text == self.lang['menu_delete']:
-                bot.sendMessage(cid, self.lang['profile_removed'], reply_markup='')
-                db.removeUser(uid)
+                db.updateUserData(uid, 'dialog_status', 'del_confirm')
+                bot.sendMessage(cid, self.lang['del_accept'], reply_markup=self.markup['del_acception'])
             elif update.message.text == self.lang['menu_filter']:
                 db.updateUserData(uid, 'dialog_status', 'reset_filter')
                 bot.sendMessage(cid, self.lang['filter'], reply_markup=self.markup['filter'])
@@ -507,7 +526,7 @@ class Handler:
         # Other situations
 
         elif status == 'ban':
-            bot.sendMessage(cid, 'Вы заблокированы за нарушения правил сервиса.')
+            bot.sendMessage(cid, f'Вы заблокированы за нарушения правил сервиса.\nИнформация для разбана: { user.get("id")}')
         else:
             bot.sendMessage(cid, self.lang['not_understand'])
 
